@@ -1,0 +1,57 @@
+{
+  "name": "@schoolees/thinking-orbs",
+  "version": "0.1.0",
+  "description": "Framework-free animated thinking orbs for AI-driven interfaces",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./register": {
+      "types": "./dist/register.d.ts",
+      "import": "./dist/register.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "NOTICE.md",
+    "README.md"
+  ],
+  "sideEffects": [
+    "./dist/register.js",
+    "./src/register.ts"
+  ],
+  "scripts": {
+    "dev": "vite demo",
+    "build": "vite build",
+    "build:demo": "vite build demo --outDir ../demo-dist --emptyOutDir",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run test && npm run build && npm run build:demo"
+  },
+  "keywords": [
+    "vanilla-javascript",
+    "web-component",
+    "ai",
+    "agent",
+    "loading",
+    "canvas",
+    "animation"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  }
+}

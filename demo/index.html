@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Framework-free thinking orbs for AI-driven interfaces"
+    />
+    <title>Thinking Orbs — Vanilla JavaScript</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div>
+        <p class="eyebrow">Schoolees workspace component</p>
+        <h1>Thinking orbs</h1>
+        <p class="lede">
+          Framework-free status animations for AI and agent interfaces.
+        </p>
+      </div>
+
+      <button id="theme-toggle" class="theme-toggle" type="button">
+        Switch to dark
+      </button>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="playground-title">
+        <div class="featured-orb">
+          <thinking-orb
+            id="featured-orb"
+            state="working"
+            size="64"
+          ></thinking-orb>
+          <strong id="featured-label">Working…</strong>
+        </div>
+
+        <div class="controls">
+          <div>
+            <h2 id="playground-title">Playground</h2>
+            <p>Choose the activity your AI is currently performing.</p>
+          </div>
+
+          <fieldset>
+            <legend>State</legend>
+            <div id="state-controls" class="button-group"></div>
+          </fieldset>
+
+          <label class="speed-control">
+            <span>Speed <output id="speed-output">1.00×</output></span>
+            <input
+              id="speed"
+              type="range"
+              min="0.25"
+              max="2"
+              step="0.05"
+              value="1"
+            />
+          </label>
+
+          <button id="pause-toggle" class="secondary-button" type="button">
+            Pause animation
+          </button>
+        </div>
+      </section>
+
+      <section class="states" aria-labelledby="states-title">
+        <div class="section-heading">
+          <h2 id="states-title">Six AI activity states</h2>
+          <p>Each state has distinct motion at avatar and inline sizes.</p>
+        </div>
+
+        <div id="state-grid" class="state-grid"></div>
+      </section>
+
+      <section class="usage" aria-labelledby="usage-title">
+        <div>
+          <p class="eyebrow">Use anywhere</p>
+          <h2 id="usage-title">One standards-based element</h2>
+        </div>
+        <pre><code>&lt;thinking-orb
+  state="searching"
+  size="64"
+  theme="auto"
+&gt;&lt;/thinking-orb&gt;</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      Adapted from thinking-orbs by Jakub Antalik under the MIT License.
+    </footer>
+
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
