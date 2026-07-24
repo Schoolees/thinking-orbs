@@ -23,7 +23,7 @@ describe('ThinkingOrb', () => {
 
     const orb = new ThinkingOrb(host, {
       state: 'searching',
-      size: 20,
+      size: 32,
       theme: 'light',
       paused: true
     });
@@ -31,11 +31,11 @@ describe('ThinkingOrb', () => {
     expect(orb.canvas.parentElement).toBe(host);
     expect(orb.canvas.getAttribute('role')).toBe('img');
     expect(orb.canvas.getAttribute('aria-label')).toBe('Searching…');
-    expect(orb.canvas.style.width).toBe('20px');
-    expect(orb.canvas.width).toBe(20);
+    expect(orb.canvas.style.width).toBe('32px');
+    expect(orb.canvas.width).toBe(32);
     expect(orb.snapshot).toMatchObject({
       state: 'searching',
-      size: 20,
+      size: 32,
       theme: 'light',
       paused: true,
       dark: false
@@ -172,8 +172,8 @@ describe('ThinkingOrb', () => {
     expect(() => orb.update({ state: 'dancing' as never })).toThrow(
       'Unknown ThinkingOrb state'
     );
-    expect(() => orb.update({ size: 32 as never })).toThrow(
-      'size must be 20, 64, 96, or 128'
+    expect(() => orb.update({ size: 20 as never })).toThrow(
+      'size must be 32, 64, 96, or 128'
     );
     expect(() => orb.setSpeed(0)).toThrow(
       'speed must be a positive number'
@@ -190,12 +190,12 @@ describe('ThinkingOrb', () => {
 
     const element = document.createElement('thinking-orb') as ThinkingOrbElement;
     element.setAttribute('state', 'listening');
-    element.setAttribute('size', '20');
+    element.setAttribute('size', '32');
     element.setAttribute('theme', 'light');
     document.body.append(element);
 
     expect(element.orb?.state).toBe('listening');
-    expect(element.orb?.size).toBe(20);
+    expect(element.orb?.size).toBe(32);
     expect(element.querySelector('canvas')).not.toBeNull();
 
     element.state = 'composing';

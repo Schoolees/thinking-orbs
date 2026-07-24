@@ -10,7 +10,7 @@ export const ORB_STATES = [
   'shaping'
 ] as const;
 
-export const ORB_SIZES = [20, 64, 96, 128] as const;
+export const ORB_SIZES = [32, 64, 96, 128] as const;
 export const ORB_THEMES = ['auto', 'dark', 'light'] as const;
 
 export type OrbState = (typeof ORB_STATES)[number];

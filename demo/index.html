@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,7 +20,7 @@
       </div>
 
       <button id="theme-toggle" class="theme-toggle" type="button">
-        Switch to dark
+        Switch to light
       </button>
     </header>
 
@@ -29,14 +29,14 @@
         <div class="featured-orb">
           <thinking-orb
             id="featured-orb"
-            state="responding"
+            state="composing"
             size="128"
           ></thinking-orb>
           <strong
             id="featured-label"
             class="state-label is-shimmering"
-            data-text="Responding…"
-          >Responding…</strong>
+            data-text="Composing…"
+          >Composing…</strong>
         </div>
 
         <div class="controls">
@@ -82,11 +82,21 @@
           <p class="eyebrow">Use anywhere</p>
           <h2 id="usage-title">One standards-based element</h2>
         </div>
-        <pre><code>&lt;thinking-orb
+        <div class="code-panel">
+          <div class="code-panel-header" aria-hidden="true">
+            <span class="code-panel-dots">
+              <i></i>
+              <i></i>
+              <i></i>
+            </span>
+            <span>HTML</span>
+          </div>
+          <pre><code>&lt;thinking-orb
   state="searching"
   size="128"
   theme="auto"
 &gt;&lt;/thinking-orb&gt;</code></pre>
+        </div>
       </section>
     </main>
 

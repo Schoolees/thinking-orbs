@@ -360,15 +360,54 @@ code {
   margin-top: 10px;
 }
 
-pre {
-  overflow-x: auto;
-  margin: 0;
+.code-panel {
+  overflow: hidden;
+  border: 1px solid #27272a;
   border-radius: 16px;
   background: #18181b;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 12%);
+}
+
+.code-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #27272a;
+  padding: 11px 16px;
+  color: #a1a1aa;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.code-panel-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.code-panel-dots i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #52525b;
+}
+
+.code-panel-dots i:nth-child(2) {
+  opacity: 0.7;
+}
+
+.code-panel-dots i:nth-child(3) {
+  opacity: 0.45;
+}
+
+.code-panel pre {
+  overflow-x: auto;
+  margin: 0;
   padding: 24px;
 }
 
-pre code {
+.code-panel pre code {
   color: #f4f4f5;
   font-size: 0.9rem;
   line-height: 1.65;

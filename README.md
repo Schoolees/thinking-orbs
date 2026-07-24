@@ -12,7 +12,7 @@ under the MIT License.
 
 - Nine states: `idle`, `working`, `connecting`, `searching`, `solving`,
   `listening`, `composing`, `responding`, and `shaping`
-- Purpose-tuned `20px`, `64px`, `96px`, and `128px` sizes
+- Purpose-tuned `32px`, `64px`, `96px`, and `128px` sizes
 - Automatic light/dark theme detection
 - Live state, speed, theme, and pause controls
 - Accessible state labels and reduced-motion support
@@ -83,7 +83,7 @@ Supported attributes:
 | Attribute | Values | Default |
 | --- | --- | --- |
 | `state` | `idle`, `working`, `connecting`, `searching`, `solving`, `listening`, `composing`, `responding`, `shaping` | `working` |
-| `size` | `20`, `64`, `96`, `128` | `64` |
+| `size` | `32`, `64`, `96`, `128` | `64` |
 | `theme` | `auto`, `light`, `dark` | `auto` |
 | `speed` | Any positive number | `1` |
 | `paused` | Boolean attribute | Off |

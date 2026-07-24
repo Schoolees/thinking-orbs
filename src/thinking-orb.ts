@@ -180,7 +180,7 @@ export class ThinkingOrb {
 
     if (options.size !== undefined) {
       if (!includesValue(ORB_SIZES, options.size)) {
-        throw new TypeError('ThinkingOrb size must be 20, 64, 96, or 128.');
+        throw new TypeError('ThinkingOrb size must be 32, 64, 96, or 128.');
       }
 
       this.sizeValue = options.size;

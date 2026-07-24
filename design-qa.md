@@ -4,7 +4,7 @@
 - Implementation: `demo/index.html`
 - Intended desktop viewport: 1440 x 1000 CSS pixels at 1x density
 - Intended mobile viewport: 390 x 844 CSS pixels at 1x density
-- State: all nine animation states, light and dark themes, 20px, 64px, 96px,
+- State: all nine animation states, light and dark themes, 32px, 64px, 96px,
   and 128px sizes
 - Source screenshot: unavailable
 - Implementation screenshot: unavailable
@@ -34,7 +34,7 @@ surface is unavailable in this environment.
 
 - Fonts and typography: the demo uses a system sans-serif stack and does not
   affect the reusable component.
-- Spacing and layout rhythm: the component owns only its fixed 20px, 64px,
+- Spacing and layout rhythm: the component owns only its fixed 32px, 64px,
   96px, or 128px canvas; host projects own surrounding layout.
 - Colors and visual tokens: the original monochrome light/dark painter is
   preserved, including automatic ancestor and OS theme detection.

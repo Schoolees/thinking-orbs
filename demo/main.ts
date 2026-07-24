@@ -35,7 +35,7 @@ if (
   throw new Error('Thinking-orbs demo could not find its required elements.');
 }
 
-let activeState: OrbState = 'responding';
+let activeState: OrbState = 'composing';
 
 for (const state of ORB_STATES) {
   const button = document.createElement('button');
@@ -75,8 +75,8 @@ for (const state of ORB_STATES) {
         <small>64px</small>
       </div>
       <div>
-        <thinking-orb state="${state}" size="20"></thinking-orb>
-        <small>20px</small>
+        <thinking-orb state="${state}" size="32"></thinking-orb>
+        <small>32px</small>
       </div>
     </div>
     <div>
