@@ -2,11 +2,14 @@ import '../src/register';
 import { ORB_STATES, type OrbState, type ThinkingOrbElement } from '../src';
 
 const STATE_LABELS: Record<OrbState, string> = {
+  idle: 'Idle',
   working: 'Working',
+  connecting: 'Connecting',
   searching: 'Searching',
   solving: 'Solving',
   listening: 'Listening',
   composing: 'Composing',
+  responding: 'Responding',
   shaping: 'Shaping'
 };
 
@@ -32,7 +35,7 @@ if (
   throw new Error('Thinking-orbs demo could not find its required elements.');
 }
 
-let activeState: OrbState = 'working';
+let activeState: OrbState = 'responding';
 
 for (const state of ORB_STATES) {
   const button = document.createElement('button');
@@ -44,6 +47,7 @@ for (const state of ORB_STATES) {
     activeState = state;
     featuredOrb.state = state;
     featuredLabel.textContent = `${STATE_LABELS[state]}…`;
+    featuredLabel.dataset.text = featuredLabel.textContent;
 
     for (const stateButton of stateControls.querySelectorAll('button')) {
       stateButton.classList.toggle(
@@ -57,12 +61,29 @@ for (const state of ORB_STATES) {
   const card = document.createElement('article');
   card.className = 'state-card';
   card.innerHTML = `
-    <div class="orb-pair">
-      <thinking-orb state="${state}" size="64"></thinking-orb>
-      <thinking-orb state="${state}" size="20"></thinking-orb>
+    <div class="orb-sizes">
+      <div>
+        <thinking-orb state="${state}" size="128"></thinking-orb>
+        <small>128px</small>
+      </div>
+      <div>
+        <thinking-orb state="${state}" size="96"></thinking-orb>
+        <small>96px</small>
+      </div>
+      <div>
+        <thinking-orb state="${state}" size="64"></thinking-orb>
+        <small>64px</small>
+      </div>
+      <div>
+        <thinking-orb state="${state}" size="20"></thinking-orb>
+        <small>20px</small>
+      </div>
     </div>
     <div>
-      <h3>${STATE_LABELS[state]}</h3>
+      <h3
+        class="state-label is-shimmering"
+        data-text="${STATE_LABELS[state]}"
+      >${STATE_LABELS[state]}</h3>
       <code>state="${state}"</code>
     </div>
   `;

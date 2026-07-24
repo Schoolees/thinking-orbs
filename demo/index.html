@@ -13,7 +13,6 @@
   <body>
     <header class="site-header">
       <div>
-        <p class="eyebrow">Schoolees workspace component</p>
         <h1>Thinking orbs</h1>
         <p class="lede">
           Framework-free status animations for AI and agent interfaces.
@@ -30,10 +29,14 @@
         <div class="featured-orb">
           <thinking-orb
             id="featured-orb"
-            state="working"
-            size="64"
+            state="responding"
+            size="128"
           ></thinking-orb>
-          <strong id="featured-label">Working…</strong>
+          <strong
+            id="featured-label"
+            class="state-label is-shimmering"
+            data-text="Responding…"
+          >Responding…</strong>
         </div>
 
         <div class="controls">
@@ -67,7 +70,7 @@
 
       <section class="states" aria-labelledby="states-title">
         <div class="section-heading">
-          <h2 id="states-title">Six AI activity states</h2>
+          <h2 id="states-title">Nine AI activity states</h2>
           <p>Each state has distinct motion at avatar and inline sizes.</p>
         </div>
 
@@ -81,7 +84,7 @@
         </div>
         <pre><code>&lt;thinking-orb
   state="searching"
-  size="64"
+  size="128"
   theme="auto"
 &gt;&lt;/thinking-orb&gt;</code></pre>
       </section>

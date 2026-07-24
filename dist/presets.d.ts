@@ -1,6 +1,6 @@
 import { ModeOpts } from './engine/profiles';
 import { OrbSize, OrbState } from './types';
-export type ModeKey = 'orbits' | 'globe' | 'rubik' | 'wave' | 'ribbon' | 'morph';
+export type ModeKey = 'idle' | 'orbits' | 'connecting' | 'globe' | 'rubik' | 'wave' | 'ribbon' | 'responding' | 'morph';
 export declare const STATE_TO_MODE: Record<OrbState, ModeKey>;
 export interface Resolved {
     mode: ModeKey;

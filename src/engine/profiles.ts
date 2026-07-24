@@ -14,7 +14,7 @@ const COUNT_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ['rings', 'lonDensity'],
   ['lanes', 'segs']
 ];
-const COUNT_KEYS = ['orbitN', 'ghostN'] as const;
+const COUNT_KEYS = ['orbitN', 'ghostN', 'pulseN', 'pointN'] as const;
 const ICON_DENSITY_KEYS = ['iconD'] as const;
 
 // Every key that sets a dot's rendered radius — scaling all of them keeps
@@ -60,6 +60,13 @@ export function scaleRadii(opts: ModeOpts, scale: number): ModeOpts {
 
 /** Base (fine) profiles per mode, before preset multipliers. */
 export const BASE_PROFILES: Record<string, ModeOpts> = {
+  idle: {
+    pointN: 132,
+    rBase: 0.68,
+    rDepth: 1.5,
+    rsPow: 0.6,
+    rMin: 0.3
+  },
   globe: {
     latRings: 17,
     lonDensity: 44,
@@ -79,6 +86,16 @@ export const BASE_PROFILES: Record<string, ModeOpts> = {
     particles: 3,
     partR: 1.2,
     partRDepth: 1.6,
+    rsPow: 0.6,
+    rMin: 0.3
+  },
+  connecting: {
+    pointN: 108,
+    lobeRadius: 0.32,
+    lobeGap: 0.16,
+    gapPulse: 0.01,
+    rBase: 0.68,
+    rDepth: 1.5,
     rsPow: 0.6,
     rMin: 0.3
   },
@@ -108,6 +125,15 @@ export const BASE_PROFILES: Record<string, ModeOpts> = {
     ghostN: 150,
     rBase: 1.1,
     rDepth: 1.7,
+    rsPow: 0.6,
+    rMin: 0.3
+  },
+  responding: {
+    pulseN: 156,
+    shellCount: 3,
+    pulseSpeed: 0.17,
+    rBase: 0.7,
+    rDepth: 1.6,
     rsPow: 0.6,
     rMin: 0.3
   },

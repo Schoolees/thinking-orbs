@@ -14,11 +14,14 @@ import {
 } from './types';
 
 const DEFAULT_LABELS: Record<OrbState, string> = {
+  idle: 'Ready',
   working: 'Working…',
+  connecting: 'Connecting…',
   searching: 'Searching…',
   solving: 'Solving…',
   listening: 'Listening…',
   composing: 'Composing…',
+  responding: 'Responding…',
   shaping: 'Shaping…'
 };
 
@@ -177,7 +180,7 @@ export class ThinkingOrb {
 
     if (options.size !== undefined) {
       if (!includesValue(ORB_SIZES, options.size)) {
-        throw new TypeError('ThinkingOrb size must be 20 or 64.');
+        throw new TypeError('ThinkingOrb size must be 20, 64, 96, or 128.');
       }
 
       this.sizeValue = options.size;

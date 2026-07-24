@@ -4,7 +4,8 @@
 - Implementation: `demo/index.html`
 - Intended desktop viewport: 1440 x 1000 CSS pixels at 1x density
 - Intended mobile viewport: 390 x 844 CSS pixels at 1x density
-- State: all six animation states, light and dark themes, 64px and 20px sizes
+- State: all nine animation states, light and dark themes, 20px, 64px, 96px,
+  and 128px sizes
 - Source screenshot: unavailable
 - Implementation screenshot: unavailable
 
@@ -12,8 +13,8 @@
 
 The upstream repository supplied the exact Canvas 2D animation painters,
 profiles, sizes, and state presets. Those MIT-licensed engine files are
-preserved in the standalone package. The new demo presents the same six
-states and playground controls without React.
+preserved in the standalone package. The demo presents those states plus three
+extended lifecycle states and playground controls without React.
 
 ## Focused region evidence
 
@@ -33,8 +34,8 @@ surface is unavailable in this environment.
 
 - Fonts and typography: the demo uses a system sans-serif stack and does not
   affect the reusable component.
-- Spacing and layout rhythm: the component owns only its fixed 20px or 64px
-  canvas; host projects own surrounding layout.
+- Spacing and layout rhythm: the component owns only its fixed 20px, 64px,
+  96px, or 128px canvas; host projects own surrounding layout.
 - Colors and visual tokens: the original monochrome light/dark painter is
   preserved, including automatic ancestor and OS theme detection.
 - Image quality and asset fidelity: the component uses the original Canvas 2D
@@ -44,7 +45,7 @@ surface is unavailable in this environment.
 ## Verification
 
 - TypeScript type-check: passed.
-- Vitest: 6 tests passed.
+- Vitest: 11 tests passed.
 - Production package build: passed.
 - Demo build: passed.
 - Package dry run: passed with zero runtime dependencies.

@@ -1,5 +1,5 @@
-export declare const ORB_STATES: readonly ["working", "searching", "solving", "listening", "composing", "shaping"];
-export declare const ORB_SIZES: readonly [20, 64];
+export declare const ORB_STATES: readonly ["idle", "working", "connecting", "searching", "solving", "listening", "composing", "responding", "shaping"];
+export declare const ORB_SIZES: readonly [20, 64, 96, 128];
 export declare const ORB_THEMES: readonly ["auto", "dark", "light"];
 export type OrbState = (typeof ORB_STATES)[number];
 export type OrbSize = (typeof ORB_SIZES)[number];

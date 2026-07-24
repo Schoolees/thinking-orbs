@@ -1,7 +1,8 @@
 # @schoolees/thinking-orbs
 
 A framework-free animated thinking-orb component for AI-driven interfaces.
-It provides six purpose-tuned canvas animations with no runtime dependencies.
+It provides nine purpose-tuned canvas animations with no runtime
+dependencies.
 
 Adapted from
 [Jakub Antalik's thinking-orbs](https://github.com/Jakubantalik/thinking-orbs)
@@ -9,9 +10,9 @@ under the MIT License.
 
 ## Features
 
-- Six states: `working`, `searching`, `solving`, `listening`, `composing`,
-  and `shaping`
-- Purpose-tuned `64px` and `20px` sizes
+- Nine states: `idle`, `working`, `connecting`, `searching`, `solving`,
+  `listening`, `composing`, `responding`, and `shaping`
+- Purpose-tuned `20px`, `64px`, `96px`, and `128px` sizes
 - Automatic light/dark theme detection
 - Live state, speed, theme, and pause controls
 - Accessible state labels and reduced-motion support
@@ -37,7 +38,7 @@ Install directly from GitHub:
 npm install git+ssh://git@github.com/Schoolees/thinking-orbs.git
 ```
 
-For local development inside the Schoolees workspace:
+For local development inside your local project:
 
 ```bash
 npm install file:/path/to/workspace/components/thinking-orbs
@@ -81,8 +82,8 @@ Supported attributes:
 
 | Attribute | Values | Default |
 | --- | --- | --- |
-| `state` | `working`, `searching`, `solving`, `listening`, `composing`, `shaping` | `working` |
-| `size` | `64`, `20` | `64` |
+| `state` | `idle`, `working`, `connecting`, `searching`, `solving`, `listening`, `composing`, `responding`, `shaping` | `working` |
+| `size` | `20`, `64`, `96`, `128` | `64` |
 | `theme` | `auto`, `light`, `dark` | `auto` |
 | `speed` | Any positive number | `1` |
 | `paused` | Boolean attribute | Off |
@@ -122,11 +123,14 @@ constructor.
 
 | Application activity | Orb state |
 | --- | --- |
+| Ready for user input | `idle` |
 | Waiting for general agent work | `working` |
+| Establishing an AI or API connection | `connecting` |
 | Retrieving records or web results | `searching` |
 | Reasoning, validation, or calculation | `solving` |
 | Capturing voice or user input | `listening` |
 | Drafting a response | `composing` |
+| Streaming or presenting a response | `responding` |
 | Generating structured output | `shaping` |
 
 ## Theme detection

@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
+  ORB_SIZES,
   ORB_STATES,
   ThinkingOrb,
   defineThinkingOrb,
+  resolvePreset,
   type ThinkingOrbElement
 } from '../src';
 import '../src/register';
@@ -60,6 +62,72 @@ describe('ThinkingOrb', () => {
     expect(canvas.isConnected).toBe(true);
   });
 
+  it('renders every supported canvas size', () => {
+    const canvas = document.createElement('canvas');
+    const orb = new ThinkingOrb(canvas, { paused: true });
+
+    for (const state of ORB_STATES) {
+      for (const size of ORB_SIZES) {
+        orb.update({ state, size }).render(1);
+        expect(orb.state).toBe(state);
+        expect(orb.size).toBe(size);
+        expect(canvas.style.width).toBe(`${size}px`);
+        expect(canvas.style.height).toBe(`${size}px`);
+      }
+    }
+
+    orb.destroy();
+  });
+
+  it('renders responding as an outward wave state', () => {
+    expect(ORB_STATES).toContain('responding');
+    expect(resolvePreset('responding', 64)).toMatchObject({
+      mode: 'responding',
+      speed: 2.5
+    });
+
+    const canvas = document.createElement('canvas');
+    const orb = new ThinkingOrb(canvas, {
+      state: 'responding',
+      paused: true
+    });
+
+    expect(canvas.getAttribute('aria-label')).toBe('Responding…');
+    expect(() => orb.render(1)).not.toThrow();
+
+    orb.destroy();
+  });
+
+  it.each([
+    ['idle', 'idle', 'Ready'],
+    ['connecting', 'connecting', 'Connecting…']
+  ] as const)(
+    'renders the %s lifecycle state',
+    (state, mode, label) => {
+      expect(ORB_STATES).toContain(state);
+      expect(resolvePreset(state, 64).mode).toBe(mode);
+
+      const canvas = document.createElement('canvas');
+      const orb = new ThinkingOrb(canvas, {
+        state,
+        paused: true
+      });
+
+      expect(canvas.getAttribute('aria-label')).toBe(label);
+      expect(() => orb.render(1)).not.toThrow();
+
+      orb.destroy();
+    }
+  );
+
+  it('keeps the connecting lobes visually prominent', () => {
+    expect(resolvePreset('connecting', 64).opts).toMatchObject({
+      lobeRadius: 0.32,
+      lobeGap: 0.16,
+      gapPulse: 0.01
+    });
+  });
+
   it('follows ancestor themes and supports explicit overrides', () => {
     const host = document.createElement('div');
     host.dataset.theme = 'dark';
@@ -101,11 +169,11 @@ describe('ThinkingOrb', () => {
     const canvas = document.createElement('canvas');
     const orb = new ThinkingOrb(canvas, { paused: true });
 
-    expect(() => orb.update({ state: 'idle' as never })).toThrow(
+    expect(() => orb.update({ state: 'dancing' as never })).toThrow(
       'Unknown ThinkingOrb state'
     );
     expect(() => orb.update({ size: 32 as never })).toThrow(
-      'size must be 20 or 64'
+      'size must be 20, 64, 96, or 128'
     );
     expect(() => orb.setSpeed(0)).toThrow(
       'speed must be a positive number'

@@ -162,6 +162,61 @@ h2 {
   font-size: 1.125rem;
 }
 
+.state-label.is-shimmering {
+  position: relative;
+  display: inline-block;
+  color: rgb(7 7 7 / 45%);
+}
+
+:root[data-theme="dark"] .state-label.is-shimmering {
+  color: rgb(251 251 251 / 50%);
+}
+
+.state-label.is-shimmering::before {
+  position: absolute;
+  inset: 0;
+  color: transparent;
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 40%,
+      #0d0d0d 50%,
+      transparent 60%,
+      transparent 100%
+    );
+  background-size: 400% 100%;
+  background-repeat: no-repeat;
+  background-clip: text;
+  -webkit-background-clip: text;
+  content: attr(data-text);
+  pointer-events: none;
+  -webkit-text-fill-color: transparent;
+  animation: state-label-shimmer 2s linear infinite;
+}
+
+:root[data-theme="dark"] .state-label.is-shimmering::before {
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      transparent 40%,
+      #fff 50%,
+      transparent 60%,
+      transparent 100%
+    );
+}
+
+@keyframes state-label-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
 .controls {
   display: flex;
   flex-direction: column;
@@ -240,8 +295,9 @@ legend,
 
 .state-card {
   display: flex;
-  min-height: 180px;
-  align-items: center;
+  min-height: 390px;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 24px;
   border: 1px solid #e4e4e7;
@@ -255,10 +311,26 @@ legend,
   background: #27272a;
 }
 
-.orb-pair {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.orb-sizes {
+  display: grid;
+  width: 100%;
+  grid-template-columns: minmax(128px, 1fr) minmax(96px, 1fr);
+  align-items: end;
+  gap: 22px 14px;
+}
+
+.orb-sizes > div {
+  display: grid;
+  min-height: 152px;
+  place-content: end center;
+  justify-items: center;
+  gap: 10px;
+}
+
+.orb-sizes small {
+  color: #71717a;
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 .state-card h3 {
@@ -351,5 +423,9 @@ footer {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .state-label.is-shimmering::before {
+    animation: none;
   }
 }
