@@ -1,15 +1,17 @@
-import { defineThinkingOrb as e } from "./index.js";
-import { MODE_DRAWS as O, ORB_SIZES as T, ORB_STATES as E, ORB_THEMES as S, STATE_TO_MODE as o, ThinkingOrb as t, ThinkingOrbElement as _, createThinkingOrb as b, resolvePreset as g } from "./index.js";
-e();
+import { defineThinkingOrb as O } from "./index.js";
+import { CONTOUR_MODE_DRAWS as i, MODE_DRAWS as n, ORB_SIZES as E, ORB_STATES as S, ORB_THEMES as _, ORB_VARIANTS as R, STATE_TO_MODE as o, ThinkingOrb as t, ThinkingOrbElement as A, createThinkingOrb as D, resolvePreset as b } from "./index.js";
+O();
 export {
-  O as MODE_DRAWS,
-  T as ORB_SIZES,
-  E as ORB_STATES,
-  S as ORB_THEMES,
+  i as CONTOUR_MODE_DRAWS,
+  n as MODE_DRAWS,
+  E as ORB_SIZES,
+  S as ORB_STATES,
+  _ as ORB_THEMES,
+  R as ORB_VARIANTS,
   o as STATE_TO_MODE,
   t as ThinkingOrb,
-  _ as ThinkingOrbElement,
-  b as createThinkingOrb,
-  e as defineThinkingOrb,
-  g as resolvePreset
+  A as ThinkingOrbElement,
+  D as createThinkingOrb,
+  O as defineThinkingOrb,
+  b as resolvePreset
 };

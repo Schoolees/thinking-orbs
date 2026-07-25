@@ -9,14 +9,14 @@ import { angleDelta, hashD, makeProj, paint, radiusScale } from './core';
 // Rapid eased moves scramble, then replay in reverse (palindrome) so
 // everything clicks back to solved, rests, repeats.
 
-interface Move {
+export interface Move {
   axis: 0 | 1 | 2;
   lo: number;
   hi: number;
   ang: number;
 }
 
-function solveCycle(time: number, count: number, slotDur: number, rest: number) {
+export function solveCycle(time: number, count: number, slotDur: number, rest: number) {
   const cyc = 2 * count * slotDur + rest;
   const tc = time % cyc;
   const amount = new Array<number>(count).fill(0);
@@ -40,7 +40,7 @@ function solveCycle(time: number, count: number, slotDur: number, rest: number) 
   return { amount, active };
 }
 
-function applyMoves(
+export function applyMoves(
   pt3: [number, number, number],
   moves: Move[],
   sc: { amount: number[]; active: number }
@@ -73,7 +73,7 @@ function applyMoves(
   return [x, y, z, inActive];
 }
 
-function makeMoves(count: number): Move[] {
+export function makeMoves(count: number): Move[] {
   const moves: Move[] = [];
   for (let i = 0; i < count; i++) {
     const axis = Math.min(2, Math.floor(hashD(i, 2.3) * 3)) as 0 | 1 | 2;

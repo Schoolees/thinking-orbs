@@ -1,8 +1,21 @@
-// Mode key → frame painter. Kept separate from the presets so tree
-// shaking can in principle drop unused modes in custom builds.
+// Mode key → frame painter. The classic registry preserves the original orb
+// family; contour alternatives are opt-in and intentionally limited.
 
 import type { ModeKey } from '../presets';
 import type { ModeDraw } from './types';
+import {
+  drawContourConnecting,
+  drawContourGlobe,
+  drawContourIdle,
+  drawContourMorph,
+  drawContourResponding,
+  drawContourRibbon,
+  drawContourRubik
+} from './contour-family';
+import {
+  drawContourListening,
+  drawContourWorking
+} from './contours';
 import { drawGlobe, drawRubik, drawWave } from './lattice';
 import {
   drawConnecting,
@@ -23,4 +36,16 @@ export const MODE_DRAWS: Record<ModeKey, ModeDraw> = {
   ribbon: drawRibbon,
   responding: drawResponding,
   morph: drawMorph
+};
+
+export const CONTOUR_MODE_DRAWS: Record<ModeKey, ModeDraw> = {
+  idle: drawContourIdle,
+  orbits: drawContourWorking,
+  connecting: drawContourConnecting,
+  globe: drawContourGlobe,
+  rubik: drawContourRubik,
+  wave: drawContourListening,
+  ribbon: drawContourRibbon,
+  responding: drawContourResponding,
+  morph: drawContourMorph
 };

@@ -1,13 +1,16 @@
-import { OrbSize, OrbState, OrbTheme, ThinkingOrbOptions, ThinkingOrbSnapshot, ThinkingOrbTarget } from './types';
+import { OrbSize, OrbState, OrbTheme, OrbVariant, ThinkingOrbOptions, ThinkingOrbSnapshot, ThinkingOrbTarget } from './types';
 export declare class ThinkingOrb {
     readonly canvas: HTMLCanvasElement;
     private readonly createdCanvas;
     private readonly context;
+    private readonly distortionContext;
     private stateValue;
     private sizeValue;
     private themeValue;
+    private variantValue;
     private speedValue;
     private pausedValue;
+    private interactiveValue;
     private customAriaLabel;
     private darkValue;
     private reducedMotionValue;
@@ -15,6 +18,13 @@ export declare class ThinkingOrb {
     private destroyed;
     private running;
     private frameHandle;
+    private lastRenderedTime;
+    private pointerX;
+    private pointerY;
+    private pointerStrength;
+    private pointerTargetX;
+    private pointerTargetY;
+    private pointerTargetStrength;
     private intersectionObserver;
     private mutationObserver;
     private removeDarkMediaListener;
@@ -22,17 +32,25 @@ export declare class ThinkingOrb {
     private readonly onVisibilityChange;
     private readonly onThemeChange;
     private readonly onReducedMotionChange;
+    private readonly onPointerMove;
+    private readonly onPointerLeave;
+    private readonly onPointerDown;
+    private readonly onPointerUp;
     constructor(target: ThinkingOrbTarget, options?: ThinkingOrbOptions);
     get state(): OrbState;
     get size(): OrbSize;
     get theme(): OrbTheme;
+    get variant(): OrbVariant;
     get speed(): number;
     get paused(): boolean;
+    get interactive(): boolean;
     get snapshot(): ThinkingOrbSnapshot;
     update(options?: ThinkingOrbOptions): this;
     setState(state: OrbState): this;
     setTheme(theme: OrbTheme): this;
+    setVariant(variant: OrbVariant): this;
     setSpeed(speed: number): this;
+    setInteractive(interactive: boolean): this;
     pause(): this;
     resume(): this;
     render(timeSeconds?: number): this;
@@ -47,6 +65,9 @@ export declare class ThinkingOrb {
     private shouldAnimate;
     private start;
     private stop;
+    private stepInteraction;
+    private interactionNeedsFrame;
+    private distortPoint;
     private assertActive;
 }
 export declare function createThinkingOrb(target: ThinkingOrbTarget, options?: ThinkingOrbOptions): ThinkingOrb;

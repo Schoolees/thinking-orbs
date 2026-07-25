@@ -68,7 +68,12 @@ const HOLD = 1.4;
 const MORPH = 0.9;
 const SEG = HOLD + MORPH;
 
-export const drawMorph: ModeDraw = (ctx, size, t, dark, o) => {
+interface MorphOutline {
+  points: Array<[number, number]>;
+  pulse: number;
+}
+
+export function resolveMorphOutline(t: number, o: Record<string, number | undefined>): MorphOutline {
   const K = CYCLE.length;
   const tc = t % (SEG * K);
   const k = Math.floor(tc / SEG);
@@ -80,13 +85,21 @@ export const drawMorph: ModeDraw = (ctx, size, t, dark, o) => {
   const pA = CYCLE[k];
   const pB = CYCLE[(k + 1) % K];
   const M = 160;
-  const pts: Array<[number, number]> = [];
+  const points: Array<[number, number]> = [];
   for (let i = 0; i < M; i++) {
     const f = i / M;
     const a = pA(f);
     const b = pB(f);
-    pts.push([(a[0] + (b[0] - a[0]) * m) * sprd, (a[1] + (b[1] - a[1]) * m) * sprd]);
+    points.push([(a[0] + (b[0] - a[0]) * m) * sprd, (a[1] + (b[1] - a[1]) * m) * sprd]);
   }
+  const pulse = 1 + 0.02 * Math.sin(local * 3.1);
+
+  return { points, pulse };
+}
+
+export const drawMorph: ModeDraw = (ctx, size, t, dark, o) => {
+  const { points: pts, pulse } = resolveMorphOutline(t, o);
+  const M = pts.length;
   const L: number[] = [];
   let total = 0;
   for (let i = 0; i < M; i++) {
@@ -100,8 +113,7 @@ export const drawMorph: ModeDraw = (ctx, size, t, dark, o) => {
   // dot radius depends ONLY on rDot (the size knob); the count sets the
   // gaps. Formed shapes breathe a little (uniform pulse).
   const n = morphN(o.iconD ?? 1);
-  const re = (o.rDot ?? 0.021) * 1.35 * sprd;
-  const pulse = 1 + 0.02 * Math.sin(local * 3.1);
+  const re = (o.rDot ?? 0.021) * 1.35 * (o.spread ?? 1);
 
   const dots: Dot[] = [];
   const c2 = size / 2;

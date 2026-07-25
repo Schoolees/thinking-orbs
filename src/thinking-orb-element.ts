@@ -3,9 +3,11 @@ import {
   ORB_SIZES,
   ORB_STATES,
   ORB_THEMES,
+  ORB_VARIANTS,
   type OrbSize,
   type OrbState,
   type OrbTheme,
+  type OrbVariant,
   type ThinkingOrbOptions
 } from './types';
 
@@ -35,6 +37,12 @@ function themeAttribute(value: string | null): OrbTheme {
     : 'auto';
 }
 
+function variantAttribute(value: string | null): OrbVariant {
+  return ORB_VARIANTS.includes(value as OrbVariant)
+    ? value as OrbVariant
+    : 'classic';
+}
+
 function speedAttribute(value: string | null): number {
   const speed = Number(value);
 
@@ -46,8 +54,10 @@ export class ThinkingOrbElement extends HTMLElementBase {
     'state',
     'size',
     'theme',
+    'variant',
     'speed',
     'paused',
+    'interactive',
     'aria-label'
   ];
 
@@ -89,6 +99,14 @@ export class ThinkingOrbElement extends HTMLElementBase {
     this.setAttribute('state', value);
   }
 
+  get variant(): OrbVariant {
+    return variantAttribute(this.getAttribute('variant'));
+  }
+
+  set variant(value: OrbVariant) {
+    this.setAttribute('variant', value);
+  }
+
   get paused(): boolean {
     return this.hasAttribute('paused');
   }
@@ -97,13 +115,23 @@ export class ThinkingOrbElement extends HTMLElementBase {
     this.toggleAttribute('paused', value);
   }
 
+  get interactive(): boolean {
+    return this.hasAttribute('interactive');
+  }
+
+  set interactive(value: boolean) {
+    this.toggleAttribute('interactive', value);
+  }
+
   private readOptions(): ThinkingOrbOptions {
     return {
       state: stateAttribute(this.getAttribute('state')),
       size: sizeAttribute(this.getAttribute('size')),
       theme: themeAttribute(this.getAttribute('theme')),
+      variant: variantAttribute(this.getAttribute('variant')),
       speed: speedAttribute(this.getAttribute('speed')),
       paused: this.hasAttribute('paused'),
+      interactive: this.hasAttribute('interactive'),
       ariaLabel: this.getAttribute('aria-label')
     };
   }

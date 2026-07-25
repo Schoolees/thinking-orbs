@@ -19,7 +19,15 @@ const ICON_DENSITY_KEYS = ['iconD'] as const;
 
 // Every key that sets a dot's rendered radius — scaling all of them keeps
 // a dot's near/far falloff intact while shrinking or growing the mark.
-const RADIUS_KEYS = ['rBase', 'rDepth', 'rActive', 'rDot', 'ghostR', 'partR', 'partRDepth'] as const;
+const RADIUS_KEYS = [
+  'rBase',
+  'rDepth',
+  'rActive',
+  'rDot',
+  'ghostR',
+  'partR',
+  'partRDepth'
+] as const;
 
 export function scaleCounts(opts: ModeOpts, scale: number): ModeOpts {
   const out: ModeOpts = { ...opts };
@@ -80,22 +88,32 @@ export const BASE_PROFILES: Record<string, ModeOpts> = {
   },
   orbits: {
     orbitN: 12,
-    ghostN: 40,
+    ghostN: 30,
+    bandCount: 2,
+    bandSpread: 0.064,
+    wobMul: 1,
     ghostR: 0.9,
     ghostA: 0.5,
-    particles: 3,
-    partR: 1.2,
-    partRDepth: 1.6,
+    rBase: 1.1,
+    rDepth: 1.7,
+    particles: 5,
+    partR: 1.55,
+    partRDepth: 2.1,
     rsPow: 0.6,
     rMin: 0.3
   },
   connecting: {
-    pointN: 108,
-    lobeRadius: 0.32,
-    lobeGap: 0.16,
-    gapPulse: 0.01,
-    rBase: 0.68,
-    rDepth: 1.5,
+    pointN: 132,
+    bodyRadius: 0.39,
+    lobeRadius: 0.2,
+    lobeGap: 0.17,
+    gapPulse: 0.012,
+    laneCount: 3,
+    nodeMinSegments: 10,
+    bridgeStrands: 3,
+    signalSpeed: 0.28,
+    rBase: 1.1,
+    rDepth: 1.8,
     rsPow: 0.6,
     rMin: 0.3
   },
@@ -132,6 +150,12 @@ export const BASE_PROFILES: Record<string, ModeOpts> = {
     pulseN: 156,
     shellCount: 3,
     pulseSpeed: 0.17,
+    ribbonLineCount: 25,
+    bandSpread: 0.075,
+    wobMul: 1,
+    dotDensity: 2.8,
+    dotScale: 1.65,
+    shimmerSpeed: 0.55,
     rBase: 0.7,
     rDepth: 1.6,
     rsPow: 0.6,

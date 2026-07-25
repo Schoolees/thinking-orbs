@@ -31,6 +31,7 @@
             id="featured-orb"
             state="composing"
             size="128"
+            interactive
           ></thinking-orb>
           <strong
             id="featured-label"
@@ -42,7 +43,7 @@
         <div class="controls">
           <div>
             <h2 id="playground-title">Playground</h2>
-            <p>Choose the activity your AI is currently performing.</p>
+            <p>Choose an activity, then hover or drag across the orb.</p>
           </div>
 
           <fieldset>
@@ -77,6 +78,18 @@
         <div id="state-grid" class="state-grid"></div>
       </section>
 
+      <section class="variant-showcase" aria-labelledby="variants-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Optional style</p>
+            <h2 id="variants-title">Nine contour alternatives</h2>
+          </div>
+          <p>Every original state has a motion-matched line alternative.</p>
+        </div>
+
+        <div id="variant-grid" class="state-grid variant-grid"></div>
+      </section>
+
       <section class="usage" aria-labelledby="usage-title">
         <div>
           <p class="eyebrow">Use anywhere</p>
@@ -95,6 +108,7 @@
   state="searching"
   size="128"
   theme="auto"
+  interactive
 &gt;&lt;/thinking-orb&gt;</code></pre>
         </div>
       </section>

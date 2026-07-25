@@ -1,17 +1,28 @@
 import { vi } from 'vitest';
 
-const context = {
+export const canvasContextMock = {
   beginPath: vi.fn(),
   arc: vi.fn(),
+  clip: vi.fn(),
+  closePath: vi.fn(),
   fill: vi.fn(),
+  lineTo: vi.fn(),
+  moveTo: vi.fn(),
+  restore: vi.fn(),
+  save: vi.fn(),
+  stroke: vi.fn(),
   clearRect: vi.fn(),
   setTransform: vi.fn(),
-  fillStyle: ''
+  fillStyle: '',
+  lineCap: 'butt',
+  lineJoin: 'miter',
+  lineWidth: 1,
+  strokeStyle: ''
 };
 
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
   configurable: true,
-  value: vi.fn(() => context)
+  value: vi.fn(() => canvasContextMock)
 });
 
 Object.defineProperty(window, 'devicePixelRatio', {

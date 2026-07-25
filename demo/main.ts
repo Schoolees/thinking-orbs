@@ -17,6 +17,7 @@ const featuredOrb = document.querySelector<ThinkingOrbElement>('#featured-orb');
 const featuredLabel = document.querySelector<HTMLElement>('#featured-label');
 const stateControls = document.querySelector<HTMLElement>('#state-controls');
 const stateGrid = document.querySelector<HTMLElement>('#state-grid');
+const variantGrid = document.querySelector<HTMLElement>('#variant-grid');
 const speed = document.querySelector<HTMLInputElement>('#speed');
 const speedOutput = document.querySelector<HTMLOutputElement>('#speed-output');
 const pauseToggle = document.querySelector<HTMLButtonElement>('#pause-toggle');
@@ -27,12 +28,46 @@ if (
   || !featuredLabel
   || !stateControls
   || !stateGrid
+  || !variantGrid
   || !speed
   || !speedOutput
   || !pauseToggle
   || !themeToggle
 ) {
   throw new Error('Thinking-orbs demo could not find its required elements.');
+}
+
+for (const state of ORB_STATES) {
+  const card = document.createElement('article');
+  card.className = 'state-card';
+  card.innerHTML = `
+    <div class="orb-sizes">
+      <div>
+        <thinking-orb state="${state}" variant="contour" size="128" interactive></thinking-orb>
+        <small>128px</small>
+      </div>
+      <div>
+        <thinking-orb state="${state}" variant="contour" size="96" interactive></thinking-orb>
+        <small>96px</small>
+      </div>
+      <div>
+        <thinking-orb state="${state}" variant="contour" size="64" interactive></thinking-orb>
+        <small>64px</small>
+      </div>
+      <div>
+        <thinking-orb state="${state}" variant="contour" size="32" interactive></thinking-orb>
+        <small>32px</small>
+      </div>
+    </div>
+    <div>
+      <h3
+        class="state-label is-shimmering"
+        data-text="${STATE_LABELS[state]} contour"
+      >${STATE_LABELS[state]} contour</h3>
+      <code class="contour-config">state="${state}" variant="contour"</code>
+    </div>
+  `;
+  variantGrid.append(card);
 }
 
 let activeState: OrbState = 'composing';
@@ -63,19 +98,19 @@ for (const state of ORB_STATES) {
   card.innerHTML = `
     <div class="orb-sizes">
       <div>
-        <thinking-orb state="${state}" size="128"></thinking-orb>
+        <thinking-orb state="${state}" size="128" interactive></thinking-orb>
         <small>128px</small>
       </div>
       <div>
-        <thinking-orb state="${state}" size="96"></thinking-orb>
+        <thinking-orb state="${state}" size="96" interactive></thinking-orb>
         <small>96px</small>
       </div>
       <div>
-        <thinking-orb state="${state}" size="64"></thinking-orb>
+        <thinking-orb state="${state}" size="64" interactive></thinking-orb>
         <small>64px</small>
       </div>
       <div>
-        <thinking-orb state="${state}" size="32"></thinking-orb>
+        <thinking-orb state="${state}" size="32" interactive></thinking-orb>
         <small>32px</small>
       </div>
     </div>
@@ -84,7 +119,7 @@ for (const state of ORB_STATES) {
         class="state-label is-shimmering"
         data-text="${STATE_LABELS[state]}"
       >${STATE_LABELS[state]}</h3>
-      <code>state="${state}"</code>
+      <code class="orb-config">state="${state}"</code>
     </div>
   `;
   stateGrid.append(card);
