@@ -430,9 +430,35 @@ code {
 }
 
 footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
   color: #71717a;
   padding-block: 40px 64px;
   font-size: 0.875rem;
+}
+
+.repo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: inherit;
+  font-weight: 650;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.repo-link svg {
+  flex: none;
+}
+
+.repo-link:hover {
+  color: #18181b;
+}
+
+:root[data-theme="dark"] .repo-link:hover {
+  color: #f4f4f5;
 }
 
 @media (max-width: 860px) {
@@ -457,7 +483,8 @@ footer {
   }
 
   .site-header,
-  .section-heading {
+  .section-heading,
+  footer {
     align-items: flex-start;
     flex-direction: column;
   }
