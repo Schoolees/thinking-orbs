@@ -4,6 +4,8 @@ A framework-free animated thinking-orb component for AI-driven interfaces.
 It provides nine purpose-tuned canvas animations with no runtime
 dependencies.
 
+[View the live interactive demo](https://schoolees.github.io/thinking-orbs/).
+
 Adapted from
 [Jakub Antalik's thinking-orbs](https://github.com/Jakubantalik/thinking-orbs)
 under the MIT License.
