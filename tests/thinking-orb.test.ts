@@ -273,7 +273,7 @@ describe('ThinkingOrb', () => {
     }
   );
 
-  it('uses exactly 25 clean ribbon lines for the responding contour', () => {
+  it('uses exactly 25 non-shimmering ribbon lines for responding', () => {
     const canvas = document.createElement('canvas');
     const orb = new ThinkingOrb(canvas, {
       state: 'responding',
@@ -286,9 +286,8 @@ describe('ThinkingOrb', () => {
     vi.clearAllMocks();
     orb.render(1);
 
-    // The 25 stable rear ribbons gain many short, independently shimmering
-    // front-depth segments without adding another rotating highlight line.
-    expect(canvasContextMock.stroke.mock.calls.length).toBeGreaterThan(150);
+    // Rear/front depth layers for 48 globe lines and 25 clean inner ribbons.
+    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(146);
 
     orb.destroy();
   });
@@ -306,8 +305,8 @@ describe('ThinkingOrb', () => {
     vi.clearAllMocks();
     orb.render(1);
 
-    // Rear/front depth layers for 28 globe lines and 16 composing ribbons.
-    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(88);
+    // Rear/front depth layers for 48 globe lines and 16 composing ribbons.
+    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(128);
 
     orb.destroy();
   });
@@ -332,7 +331,7 @@ describe('ThinkingOrb', () => {
       ([, , radius]) => radius
     );
 
-    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(80);
+    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(120);
     expect(canvasContextMock.fill).toHaveBeenCalledTimes(6);
     expect(firstMarkers).toHaveLength(6);
     expect(Math.max(...firstMarkerRadii)).toBeLessThanOrEqual(
@@ -349,7 +348,7 @@ describe('ThinkingOrb', () => {
       ([x, y]) => [x, y]
     );
 
-    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(80);
+    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(120);
     expect(secondMarkers).not.toEqual(firstMarkers);
 
     orb.destroy();
@@ -408,7 +407,7 @@ describe('ThinkingOrb', () => {
     orb.render(1);
 
     expect(canvasContextMock.fill).toHaveBeenCalledTimes(10);
-    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(104);
+    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(144);
 
     const opts = resolvePreset('working', 128).opts;
     const nearRadius = (
@@ -449,7 +448,7 @@ describe('ThinkingOrb', () => {
     orb.render(1);
 
     expect(canvasContextMock.fill).toHaveBeenCalledTimes(10);
-    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(28);
+    expect(canvasContextMock.stroke).toHaveBeenCalledTimes(46);
 
     orb.destroy();
   });
@@ -538,7 +537,7 @@ describe('ThinkingOrb', () => {
       bandSpread: 0.075,
       wobMul: 1,
       dotDensity: 2.8,
-      dotScale: 1.65,
+      dotScale: 1.75,
       shimmerSpeed: 0.55
     });
 

@@ -12,6 +12,18 @@ export interface Dot {
   /** Ink value: 0 = darkest ink on paper. Mirrored on dark themes. */
   white: number;
   a?: number;
+  /** Allows intentional shimmer marks to exceed the shared base intensity. */
+  shimmer?: boolean;
+}
+
+export const ORB_MAX_ALPHA = 0.72;
+export const ORB_SHIMMER_MAX_ALPHA = 0.92;
+
+export function capOrbAlpha(
+  alpha: number,
+  maximum = ORB_MAX_ALPHA
+): number {
+  return Math.min(maximum, Math.max(0, alpha));
 }
 
 export type Projector = (x: number, y: number, z: number) => [number, number, number];
@@ -59,7 +71,10 @@ export function makeProj(yaw: number, tilt: number, cx: number, cy: number, scal
 export function paint(ctx: CanvasRenderingContext2D, dots: Dot[], dark: boolean, rMin = 0.3): void {
   dots.sort((a, b) => a.z - b.z);
   for (const d of dots) {
-    const alpha = d.a ?? 1;
+    const alpha = capOrbAlpha(
+      d.a ?? 1,
+      d.shimmer ? ORB_SHIMMER_MAX_ALPHA : ORB_MAX_ALPHA
+    );
     if (alpha < 0.02) continue;
     const w = Math.min(1, Math.max(0, d.white));
     const g = Math.round((dark ? 1 - w : w) * 255);

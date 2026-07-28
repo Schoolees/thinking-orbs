@@ -2,7 +2,12 @@
 // reuses the original state's geometry, timing, density inputs, and projection
 // so `variant="contour"` changes the mark-making rather than the meaning.
 
-import { makeProj } from './core';
+import {
+  capOrbAlpha,
+  makeProj,
+  ORB_MAX_ALPHA,
+  ORB_SHIMMER_MAX_ALPHA
+} from './core';
 import {
   applyMoves,
   makeMoves,
@@ -17,11 +22,15 @@ type SpatialPoint = readonly [number, number, number];
 type SpatialPath = (amount: number) => SpatialPoint;
 
 const TAU = Math.PI * 2;
+const INNER_RIBBON_FAR_ALPHA = 0.14;
+const INNER_RIBBON_NEAR_ALPHA = 0.44;
 
 function ink(dark: boolean, alpha: number): string {
+  const cappedAlpha = capOrbAlpha(alpha);
+
   return dark
-    ? `rgba(250,250,250,${alpha})`
-    : `rgba(24,24,27,${alpha})`;
+    ? `rgba(250,250,250,${cappedAlpha})`
+    : `rgba(24,24,27,${cappedAlpha})`;
 }
 
 function strokePath(
@@ -31,7 +40,8 @@ function strokePath(
   dark: boolean,
   alpha: number,
   width: number,
-  closed = true
+  closed = true,
+  maximumAlpha = ORB_MAX_ALPHA
 ): void {
   ctx.beginPath();
 
@@ -49,7 +59,10 @@ function strokePath(
     ctx.closePath();
   }
 
-  ctx.strokeStyle = ink(dark, alpha);
+  const cappedAlpha = capOrbAlpha(alpha, maximumAlpha);
+  ctx.strokeStyle = dark
+    ? `rgba(250,250,250,${cappedAlpha})`
+    : `rgba(24,24,27,${cappedAlpha})`;
   ctx.lineWidth = width;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -163,16 +176,16 @@ function strokeDepthPath(
 
 function denseGlobeLineCounts(size: number): readonly [number, number] {
   if (size >= 128) {
-    return [17, 11];
+    return [29, 19];
   }
   if (size >= 96) {
-    return [14, 9];
+    return [24, 16];
   }
   if (size >= 64) {
-    return [12, 8];
+    return [20, 14];
   }
 
-  return [6, 4];
+  return [11, 8];
 }
 
 function strokeSphereCage(
@@ -188,7 +201,7 @@ function strokeSphereCage(
 ): void {
   const center = size / 2;
   const project = makeProj(yaw, tilt, center, center, radius);
-  const width = Math.max(0.38, size / 190);
+  const width = Math.max(0.34, size / 215);
   const samples = size >= 96 ? 80 : 48;
 
   for (let meridian = 0; meridian < meridianCount; meridian++) {
@@ -209,10 +222,10 @@ function strokeSphereCage(
       },
       samples,
       dark,
-      alpha * 0.5,
-      alpha,
-      width * 0.72,
-      width * 1.15
+      alpha * 0.09,
+      alpha * 0.82,
+      width * 0.52,
+      width * 0.98
     );
   }
 
@@ -234,10 +247,10 @@ function strokeSphereCage(
       },
       samples,
       dark,
-      alpha * 0.45,
-      alpha * 0.9,
-      width * 0.72,
-      width * 1.15
+      alpha * 0.08,
+      alpha * 0.76,
+      width * 0.52,
+      width * 0.98
     );
   }
 }
@@ -396,50 +409,82 @@ export const drawContourConnecting: ModeDraw = (ctx, size, t, dark, opts) => {
 
 export const drawContourGlobe: ModeDraw = (ctx, size, t, dark, opts) => {
   const center = size / 2;
-  const radius = (size / 2) * 0.82;
-  const project = makeProj(0.5, 0.42, center, center, radius);
-  const latitudeRings = Math.max(2, Math.round(opts.latRings ?? 17));
+  // Use solving's resolved density as the baseline, then increase it for the
+  // searching field while retaining its anchored geometry and shimmer.
+  const solvingLatitudeRings = size >= 128
+    ? 12
+    : size >= 96
+      ? 9
+      : size >= 64
+        ? 5
+        : 2;
+  const contourCount = Math.round((solvingLatitudeRings + 1) * 1.55);
   const samples = size >= 96 ? 88 : 52;
-  const lineWidth = Math.max(0.4, size / 175);
+  const lineWidth = Math.max(0.34, size / 215);
+  const envelopeRadius = size * 0.4;
+  const paths: SpatialPath[] = [];
+  const yaw = 0.5;
+  const tilt = 0.38;
+  const cosYaw = Math.cos(yaw);
+  const sinYaw = Math.sin(yaw);
+  const cosTilt = Math.cos(tilt);
+  const sinTilt = Math.sin(tilt);
 
-  for (let ring = 0; ring <= latitudeRings; ring++) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(center, center, envelopeRadius, 0, TAU);
+  ctx.clip();
+
+  for (let ring = 0; ring < contourCount; ring++) {
+    const ringRatio = ring / Math.max(1, contourCount - 1);
     const latitude =
       -Math.PI / 2
-      + ((ring / latitudeRings) * Math.PI);
+      + (ringRatio * Math.PI);
     const cosLatitude = Math.cos(latitude);
     const sinLatitude = Math.sin(latitude);
+    const wave =
+      (0.62 * Math.sin(-ring * 0.52))
+      + (0.38 * Math.sin(ring * 0.83));
+    const edgeEnvelope = Math.pow(Math.abs(cosLatitude), 0.72);
+    const radius = size * 0.4 * (
+      1
+      + (0.055 * wave * edgeEnvelope)
+    );
+    const solvingAlpha = 0.56 + (0.24 * ringRatio);
+    const path: SpatialPath = (amount) => {
+      const longitude = amount * TAU;
+      const x = cosLatitude * Math.cos(longitude) * radius;
+      const y = sinLatitude * radius;
+      const z = cosLatitude * Math.sin(longitude) * radius;
+      const x1 = (x * cosYaw) + (z * sinYaw);
+      const z1 = (-x * sinYaw) + (z * cosYaw);
 
-    strokePath(
+      return [
+        center + x1,
+        center + ((y * cosTilt) - (z1 * sinTilt)),
+        ((y * sinTilt) + (z1 * cosTilt)) / (size * 0.4)
+      ];
+    };
+
+    paths.push(path);
+    strokeDepthPath(
       ctx,
-      (amount) => {
-        const longitude = amount * TAU;
-        const [x, y] = project(
-          cosLatitude * Math.cos(longitude),
-          sinLatitude,
-          cosLatitude * Math.sin(longitude)
-        );
-
-        return [x, y];
-      },
+      path,
       samples,
       dark,
-      opts.dimBase ?? 0.45,
+      solvingAlpha * 0.22,
+      solvingAlpha * 0.9,
+      lineWidth * 0.52,
       lineWidth
     );
   }
 
-  // Searching shimmers across several contour fragments instead of sweeping
-  // one rigid meridian around the sphere. Each ring has a different pulse and
-  // a gentle back-and-forth highlight, while the globe itself stays anchored.
+  // Searching shimmers across the listening-style wave contours. Each line
+  // carries its own bright fragment while the underlying field stays anchored.
   const shimmerSpeed = 0.34 * (opts.scanMul ?? 1);
   const shimmerSamples = size >= 96 ? 16 : 10;
 
-  for (let ring = 1; ring < latitudeRings; ring++) {
-    const latitude =
-      -Math.PI / 2
-      + ((ring / latitudeRings) * Math.PI);
-    const cosLatitude = Math.cos(latitude);
-    const sinLatitude = Math.sin(latitude);
+  for (let ring = 1; ring < contourCount - 1; ring++) {
     const pulse =
       0.5
       + (0.5 * Math.sin((t * shimmerSpeed * 2.2) + (ring * 1.73)));
@@ -456,22 +501,19 @@ export const drawContourGlobe: ModeDraw = (ctx, size, t, dark, opts) => {
     strokePath(
       ctx,
       (amount) => {
-        const longitude = (start + ((end - start) * amount)) * TAU;
-        const [x, y] = project(
-          cosLatitude * Math.cos(longitude),
-          sinLatitude,
-          cosLatitude * Math.sin(longitude)
-        );
-
+        const [x, y] = paths[ring](start + ((end - start) * amount));
         return [x, y];
       },
       shimmerSamples,
       dark,
-      0.2 + (0.76 * pulse),
-      lineWidth * (1.25 + (0.75 * pulse)),
-      false
+      0.18 + (0.62 * pulse),
+      lineWidth * (0.96 + (0.34 * pulse)),
+      false,
+      ORB_SHIMMER_MAX_ALPHA
     );
   }
+
+  ctx.restore();
 };
 
 export const drawContourRubik: ModeDraw = (ctx, size, t, dark, opts) => {
@@ -565,8 +607,6 @@ export const drawContourRibbon: ModeDraw = (ctx, size, t, dark, opts) => {
 
   for (let lane = 0; lane < lanes; lane++) {
     const laneOffset = (lane - ((lanes - 1) / 2)) * 0.075;
-    const edge = Math.abs(lane - ((lanes - 1) / 2))
-      / Math.max(1, (lanes - 1) / 2);
 
     const ribbonPath: SpatialPath = (amount) => {
         const angle = amount * TAU;
@@ -606,8 +646,8 @@ export const drawContourRibbon: ModeDraw = (ctx, size, t, dark, opts) => {
       ribbonPath,
       size >= 96 ? 96 : 60,
       dark,
-      0.16 + (0.22 * (1 - edge)),
-      0.48 + (0.42 * (1 - edge)),
+      INNER_RIBBON_FAR_ALPHA,
+      INNER_RIBBON_NEAR_ALPHA,
       Math.max(0.32, size / 220),
       Math.max(0.5, size / 135)
     );
@@ -643,7 +683,6 @@ export const drawContourResponding: ModeDraw = (ctx, size, t, dark, opts) => {
       + ((shell / shellCount) * TAU);
     const pulse = (1 - Math.cos(cycle)) / 2;
     const radius = size * (0.32 + (0.07 * pulse));
-    const envelope = 0.45 + (0.55 * ((1 + Math.sin(cycle)) / 2));
     const yaw = (t * 0.1) + (shell * 0.82);
     const tilt = 0.5 + (0.12 * Math.sin((t * 0.25) + shell));
     const ux = Math.cos(yaw);
@@ -703,12 +742,10 @@ export const drawContourResponding: ModeDraw = (ctx, size, t, dark, opts) => {
         (amount) => pathForAngle(amount * TAU),
         size >= 96 ? 88 : 52,
         dark,
-        0.16 + (0.22 * envelope),
-        0.42 + (0.46 * envelope),
+        INNER_RIBBON_FAR_ALPHA,
+        INNER_RIBBON_NEAR_ALPHA,
         Math.max(0.32, size / 220),
-        Math.max(0.5, size / 130),
-        t * ((opts.shimmerSpeed ?? 0.55) / 0.55),
-        (shell * 11) + lane
+        Math.max(0.5, size / 135)
       );
     }
   }

@@ -154,7 +154,7 @@ export const BASE_PROFILES: Record<string, ModeOpts> = {
     bandSpread: 0.075,
     wobMul: 1,
     dotDensity: 2.8,
-    dotScale: 1.65,
+    dotScale: 1.75,
     shimmerSpeed: 0.55,
     rBase: 0.7,
     rDepth: 1.6,

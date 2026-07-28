@@ -2,7 +2,7 @@
 // orb family remains untouched; these painters are selected explicitly with
 // variant="contour".
 
-import { radiusScale } from './core';
+import { capOrbAlpha, radiusScale } from './core';
 import type { ModeDraw } from './types';
 
 type Point = readonly [number, number];
@@ -26,16 +26,18 @@ function samples(size: number): number {
 }
 
 function denseGlobeLineCounts(size: number): readonly [number, number] {
-  if (size >= 128) return [17, 11];
-  if (size >= 96) return [14, 9];
-  if (size >= 64) return [12, 8];
-  return [6, 4];
+  if (size >= 128) return [29, 19];
+  if (size >= 96) return [24, 16];
+  if (size >= 64) return [20, 14];
+  return [11, 8];
 }
 
 function ink(dark: boolean, alpha: number): string {
+  const cappedAlpha = capOrbAlpha(alpha);
+
   return dark
-    ? `rgba(250,250,250,${alpha})`
-    : `rgba(24,24,27,${alpha})`;
+    ? `rgba(250,250,250,${cappedAlpha})`
+    : `rgba(24,24,27,${cappedAlpha})`;
 }
 
 function drawPath(
@@ -99,6 +101,23 @@ function drawFrontDepthPath(
 
 function depthPainter(
   path: WorkingPath,
+  size: number
+): OrbPainter {
+  return {
+    path: (amount) => {
+      const [x, y] = path(amount);
+      return [x, y];
+    },
+    depthPath: path,
+    alpha: 0.14,
+    width: Math.max(0.32, size / 220),
+    nearAlpha: 0.44,
+    nearWidth: Math.max(0.5, size / 135)
+  };
+}
+
+function globeDepthPainter(
+  path: WorkingPath,
   alpha: number,
   width: number
 ): OrbPainter {
@@ -108,10 +127,10 @@ function depthPainter(
       return [x, y];
     },
     depthPath: path,
-    alpha: alpha * 0.5,
-    width: width * 0.72,
-    nearAlpha: alpha,
-    nearWidth: width * 1.15
+    alpha: alpha * 0.08,
+    width: width * 0.52,
+    nearAlpha: alpha * 0.95,
+    nearWidth: width
   };
 }
 
@@ -312,9 +331,9 @@ export const drawContourWorking: ModeDraw = (ctx, size, t, dark, opts) => {
       t
     );
 
-    painters.push(depthPainter(
+    painters.push(globeDepthPainter(
       path,
-      0.2 + (0.14 * (1 - Math.abs((lane * 2) - 1))),
+      0.09 + (0.07 * (1 - Math.abs((lane * 2) - 1))),
       Math.max(0.38, size / 190)
     ));
   }
@@ -329,18 +348,15 @@ export const drawContourWorking: ModeDraw = (ctx, size, t, dark, opts) => {
       t
     );
 
-    painters.push(depthPainter(
+    painters.push(globeDepthPainter(
       path,
-      0.22,
+      0.1,
       Math.max(0.38, size / 190)
     ));
   }
 
   for (let band = 0; band < bandCount; band++) {
     for (let lane = 0; lane < lanesPerBand; lane++) {
-      const edge = Math.abs(lane - ((lanesPerBand - 1) / 2))
-        / Math.max(1, (lanesPerBand - 1) / 2);
-
       const path: WorkingPath = (amount) => projectWorkingBand(
         amount,
         band,
@@ -354,8 +370,7 @@ export const drawContourWorking: ModeDraw = (ctx, size, t, dark, opts) => {
 
       painters.push(depthPainter(
         path,
-        0.48 + (0.32 * (1 - edge)) + (band * 0.04),
-        Math.max(0.45, size / 145)
+        size
       ));
     }
   }
@@ -392,7 +407,7 @@ export const drawContourWorking: ModeDraw = (ctx, size, t, dark, opts) => {
         + (opts.partRDepth ?? 2.1)
       ) * rs;
       const markerRadius = nearRadius * (0.35 + (0.65 * depth));
-      const markerAlpha = 0.42 + (0.58 * depth);
+      const markerAlpha = capOrbAlpha(0.42 + (0.58 * depth));
 
       ctx.fillStyle = `rgba(${gray},${gray},${gray},${markerAlpha})`;
       ctx.beginPath();

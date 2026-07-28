@@ -1,767 +1,760 @@
-var Ht = Object.defineProperty;
-var Wt = (s, t, n) => t in s ? Ht(s, t, { enumerable: !0, configurable: !0, writable: !0, value: n }) : s[t] = n;
-var A = (s, t, n) => Wt(s, typeof t != "symbol" ? t + "" : t, n);
-function ht(s, t) {
-  const n = Math.sin(s * 12.9898 + t * 78.233) * 43758.5453;
+var Zt = Object.defineProperty;
+var Jt = (e, t, n) => t in e ? Zt(e, t, { enumerable: !0, configurable: !0, writable: !0, value: n }) : e[t] = n;
+var V = (e, t, n) => Jt(e, typeof t != "symbol" ? t + "" : t, n);
+function tt(e, t = 0.72) {
+  return Math.min(t, Math.max(0, e));
+}
+function ct(e, t) {
+  const n = Math.sin(e * 12.9898 + t * 78.233) * 43758.5453;
   return n - Math.floor(n);
 }
-function et(s, t) {
-  const n = Math.PI * (3 - Math.sqrt(5)), r = 1 - 2 * (s + 0.5) / t, e = Math.sqrt(1 - r * r), o = s * n;
-  return [e * Math.cos(o), r, e * Math.sin(o)];
+function st(e, t) {
+  const n = Math.PI * (3 - Math.sqrt(5)), i = 1 - 2 * (e + 0.5) / t, s = Math.sqrt(1 - i * i), o = e * n;
+  return [s * Math.cos(o), i, s * Math.sin(o)];
 }
-function Gt(s, t) {
-  return Math.atan2(Math.sin(s - t), Math.cos(s - t));
+function Kt(e, t) {
+  return Math.atan2(Math.sin(e - t), Math.cos(e - t));
 }
-function q(s, t, n, r, e) {
-  const o = Math.sin(t), i = Math.cos(t), a = Math.sin(s), h = Math.cos(s);
-  return (M, d, f) => {
-    const u = M * h + f * a, c = -M * a + f * h, l = d * i - c * o, g = d * o + c * i;
-    return [n + u * e, r - l * e, g];
+function X(e, t, n, i, s) {
+  const o = Math.sin(t), r = Math.cos(t), a = Math.sin(e), c = Math.cos(e);
+  return (d, u, M) => {
+    const l = d * c + M * a, h = -d * a + M * c, p = u * r - h * o, g = u * o + h * r;
+    return [n + l * s, i - p * s, g];
   };
 }
-function G(s, t, n, r = 0.3) {
-  t.sort((e, o) => e.z - o.z);
-  for (const e of t) {
-    const o = e.a ?? 1;
+function U(e, t, n, i = 0.3) {
+  t.sort((s, o) => s.z - o.z);
+  for (const s of t) {
+    const o = tt(
+      s.a ?? 1,
+      s.shimmer ? 0.92 : 0.72
+    );
     if (o < 0.02) continue;
-    const i = Math.min(1, Math.max(0, e.white)), a = Math.round((n ? 1 - i : i) * 255);
-    s.fillStyle = `rgba(${a},${a},${a},${o})`, s.beginPath(), s.arc(e.x, e.y, Math.max(r, e.r), 0, Math.PI * 2), s.fill();
+    const r = Math.min(1, Math.max(0, s.white)), a = Math.round((n ? 1 - r : r) * 255);
+    e.fillStyle = `rgba(${a},${a},${a},${o})`, e.beginPath(), e.arc(s.x, s.y, Math.max(i, s.r), 0, Math.PI * 2), e.fill();
   }
 }
-function Z(s, t) {
-  return (s / 300) ** t;
+function Z(e, t) {
+  return (e / 300) ** t;
 }
-function Vt(s, t, n, r) {
-  const e = 2 * t * n + r, o = s % e, i = new Array(t).fill(0);
+function Lt(e, t, n, i) {
+  const s = 2 * t * n + i, o = e % s, r = new Array(t).fill(0);
   let a = -1;
   if (o < 2 * t * n) {
-    const h = Math.floor(o / n), M = (o - h * n) / n, f = 1 - (1 - Math.min(1, M / 0.7)) ** 3;
-    if (h < t) {
-      for (let u = 0; u < h; u++) i[u] = 1;
-      i[h] = f, a = h;
+    const c = Math.floor(o / n), d = (o - c * n) / n, M = 1 - (1 - Math.min(1, d / 0.7)) ** 3;
+    if (c < t) {
+      for (let l = 0; l < c; l++) r[l] = 1;
+      r[c] = M, a = c;
     } else {
-      const u = 2 * t - 1 - h;
-      for (let c = 0; c < u; c++) i[c] = 1;
-      i[u] = 1 - f, a = u;
+      const l = 2 * t - 1 - c;
+      for (let h = 0; h < l; h++) r[h] = 1;
+      r[l] = 1 - M, a = l;
     }
   }
-  return { amount: i, active: a };
+  return { amount: r, active: a };
 }
-function Lt(s, t, n) {
-  let [r, e, o] = s, i = !1;
+function Tt(e, t, n) {
+  let [i, s, o] = e, r = !1;
   for (let a = 0; a < t.length; a++) {
     if (n.amount[a] <= 0) continue;
-    const h = t[a], M = h.axis === 0 ? r : h.axis === 1 ? e : o;
-    if (M < h.lo || M >= h.hi) continue;
-    a === n.active && (i = !0);
-    const d = h.ang * n.amount[a], f = Math.cos(d), u = Math.sin(d);
-    if (h.axis === 0) {
-      const c = e * f - o * u;
-      o = e * u + o * f, e = c;
-    } else if (h.axis === 1) {
-      const c = r * f + o * u;
-      o = -r * u + o * f, r = c;
+    const c = t[a], d = c.axis === 0 ? i : c.axis === 1 ? s : o;
+    if (d < c.lo || d >= c.hi) continue;
+    a === n.active && (r = !0);
+    const u = c.ang * n.amount[a], M = Math.cos(u), l = Math.sin(u);
+    if (c.axis === 0) {
+      const h = s * M - o * l;
+      o = s * l + o * M, s = h;
+    } else if (c.axis === 1) {
+      const h = i * M + o * l;
+      o = -i * l + o * M, i = h;
     } else {
-      const c = r * f - e * u;
-      e = r * u + e * f, r = c;
+      const h = i * M - s * l;
+      s = i * l + s * M, i = h;
     }
   }
-  return [r, e, o, i];
+  return [i, s, o, r];
 }
-function Rt(s) {
+function Vt(e) {
   const t = [];
-  for (let n = 0; n < s; n++) {
-    const r = Math.min(2, Math.floor(ht(n, 2.3) * 3)), e = -1 + 0.5 * Math.min(3, Math.floor(ht(n, 5.9) * 4)), o = ht(n, 7.7) < 0.5 ? 1 : -1;
-    t.push({ axis: r, lo: e, hi: e + 0.5, ang: o * Math.PI / 2 });
+  for (let n = 0; n < e; n++) {
+    const i = Math.min(2, Math.floor(ct(n, 2.3) * 3)), s = -1 + 0.5 * Math.min(3, Math.floor(ct(n, 5.9) * 4)), o = ct(n, 7.7) < 0.5 ? 1 : -1;
+    t.push({ axis: i, lo: s, hi: s + 0.5, ang: o * Math.PI / 2 });
   }
   return t;
 }
-const Zt = (s, t, n, r, e) => {
-  const i = t / 2, a = t / 2, h = t / 2 * 0.82, M = 0.4 + 0.06 * Math.sin(n * 0.35), d = q(n * 0.5, M, i, a, h), f = n * (0.5 + (1.7 - 0.5) * (e.scanMul ?? 1)), u = Z(t, e.rsPow ?? 0.6), c = e.dimBase ?? 1, l = [], g = e.latRings ?? 17, b = e.lonDensity ?? 44;
-  for (let p = 0; p <= g; p++) {
-    const v = -Math.PI / 2 + p / g * Math.PI, m = Math.cos(v), x = Math.sin(v), y = Math.max(1, Math.round(Math.abs(m) * b));
-    for (let k = 0; k < y; k++) {
-      const S = k / y * 2 * Math.PI, [P, C, w] = d(m * Math.cos(S), x, m * Math.sin(S)), V = (w + 1) / 2, I = Gt(S + n * 0.5, f), R = Math.exp(-(I * I) / 0.18) * Math.max(0, w);
-      l.push({
-        x: P,
-        y: C,
-        z: w,
-        r: ((e.rBase ?? 0.6) + (e.rDepth ?? 1.7) * V + (e.rBoost ?? 1) * R) * u,
-        white: (e.inkFar ?? 0.62) - (e.inkSpan ?? 0.54) * V,
+const Qt = (e, t, n, i, s) => {
+  const r = t / 2, a = t / 2, c = t / 2 * 0.82, d = 0.4 + 0.06 * Math.sin(n * 0.35), u = X(n * 0.5, d, r, a, c), M = n * (0.5 + (1.7 - 0.5) * (s.scanMul ?? 1)), l = Z(t, s.rsPow ?? 0.6), h = s.dimBase ?? 1, p = [], g = s.latRings ?? 17, b = s.lonDensity ?? 44;
+  for (let f = 0; f <= g; f++) {
+    const v = -Math.PI / 2 + f / g * Math.PI, m = Math.cos(v), w = Math.sin(v), P = Math.max(1, Math.round(Math.abs(m) * b));
+    for (let R = 0; R < P; R++) {
+      const x = R / P * 2 * Math.PI, [A, k, y] = u(m * Math.cos(x), w, m * Math.sin(x)), S = (y + 1) / 2, C = Kt(x + n * 0.5, M), O = Math.exp(-(C * C) / 0.18) * Math.max(0, y);
+      p.push({
+        x: A,
+        y: k,
+        z: y,
+        r: ((s.rBase ?? 0.6) + (s.rDepth ?? 1.7) * S + (s.rBoost ?? 1) * O) * l,
+        white: (s.inkFar ?? 0.62) - (s.inkSpan ?? 0.54) * S,
         // dimBase < 1 fades un-scanned dots so the meridian reads clearly
-        a: c + (1 - c) * Math.min(1, R)
+        a: h + (1 - h) * Math.min(1, O)
       });
     }
   }
-  G(s, l, r, e.rMin);
-}, Jt = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2, a = t / 2 * 0.82, h = q(n * 0.55, 0.35 + 0.1 * Math.sin(n * 0.9), o, i, a), M = Z(t, e.rsPow ?? 0.6), d = e.moveCount ?? 14, f = Rt(d), u = Vt(n, d, 0.42, 1.2), c = [], l = e.latRings ?? 15, g = e.lonDensity ?? 40;
-  for (let b = 0; b <= l; b++) {
-    const p = -Math.PI / 2 + b / l * Math.PI, v = Math.cos(p), m = Math.sin(p), x = Math.max(1, Math.round(Math.abs(v) * g));
-    for (let y = 0; y < x; y++) {
-      const k = y / x * 2 * Math.PI, [S, P, C, w] = Lt([v * Math.cos(k), m, v * Math.sin(k)], f, u), [V, I, R] = h(S, P, C), D = (R + 1) / 2;
-      c.push({
-        x: V,
-        y: I,
-        z: R,
-        r: ((e.rBase ?? 0.6) + (e.rDepth ?? 1.7) * D + (w ? e.rActive ?? 0.3 : 0)) * M,
-        white: (e.inkFar ?? 0.62) - (e.inkSpan ?? 0.54) * D - (w ? 0.14 : 0)
+  U(e, p, i, s.rMin);
+}, tn = (e, t, n, i, s) => {
+  const o = t / 2, r = t / 2, a = t / 2 * 0.82, c = X(n * 0.55, 0.35 + 0.1 * Math.sin(n * 0.9), o, r, a), d = Z(t, s.rsPow ?? 0.6), u = s.moveCount ?? 14, M = Vt(u), l = Lt(n, u, 0.42, 1.2), h = [], p = s.latRings ?? 15, g = s.lonDensity ?? 40;
+  for (let b = 0; b <= p; b++) {
+    const f = -Math.PI / 2 + b / p * Math.PI, v = Math.cos(f), m = Math.sin(f), w = Math.max(1, Math.round(Math.abs(v) * g));
+    for (let P = 0; P < w; P++) {
+      const R = P / w * 2 * Math.PI, [x, A, k, y] = Tt([v * Math.cos(R), m, v * Math.sin(R)], M, l), [S, C, O] = c(x, A, k), T = (O + 1) / 2;
+      h.push({
+        x: S,
+        y: C,
+        z: O,
+        r: ((s.rBase ?? 0.6) + (s.rDepth ?? 1.7) * T + (y ? s.rActive ?? 0.3 : 0)) * d,
+        white: (s.inkFar ?? 0.62) - (s.inkSpan ?? 0.54) * T - (y ? 0.14 : 0)
       });
     }
   }
-  G(s, c, r, e.rMin);
-}, Kt = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2, a = t / 2 * 0.874, h = q(n * 0.18, 0.38, o, i, 1), M = Z(t, e.rsPow ?? 0.6), d = [], f = e.rings ?? 15, u = e.lonDensity ?? 40;
-  for (let c = 0; c <= f; c++) {
-    const l = -Math.PI / 2 + c / f * Math.PI, g = Math.cos(l), b = Math.sin(l), p = 0.62 * Math.sin(n * 2.1 - c * 0.52) + 0.38 * Math.sin(n * 1.27 + c * 0.83), v = a * (0.88 + 0.105 * p), m = Math.max(1, Math.round(Math.abs(g) * u));
-    for (let x = 0; x < m; x++) {
-      const y = x / m * 2 * Math.PI, [k, S, P] = h(g * Math.cos(y) * v, b * v, g * Math.sin(y) * v), C = (P / a + 1) / 2, w = Math.max(0, p);
-      d.push({
-        x: k,
-        y: S,
-        z: P,
-        r: ((e.rBase ?? 0.6) + (e.rDepth ?? 1.7) * C) * (1 + 0.4 * w) * M,
-        white: 0.66 - 0.56 * C - 0.1 * w
+  U(e, h, i, s.rMin);
+}, nn = (e, t, n, i, s) => {
+  const o = t / 2, r = t / 2, a = t / 2 * 0.874, c = X(n * 0.18, 0.38, o, r, 1), d = Z(t, s.rsPow ?? 0.6), u = [], M = s.rings ?? 15, l = s.lonDensity ?? 40;
+  for (let h = 0; h <= M; h++) {
+    const p = -Math.PI / 2 + h / M * Math.PI, g = Math.cos(p), b = Math.sin(p), f = 0.62 * Math.sin(n * 2.1 - h * 0.52) + 0.38 * Math.sin(n * 1.27 + h * 0.83), v = a * (0.88 + 0.105 * f), m = Math.max(1, Math.round(Math.abs(g) * l));
+    for (let w = 0; w < m; w++) {
+      const P = w / m * 2 * Math.PI, [R, x, A] = c(g * Math.cos(P) * v, b * v, g * Math.sin(P) * v), k = (A / a + 1) / 2, y = Math.max(0, f);
+      u.push({
+        x: R,
+        y: x,
+        z: A,
+        r: ((s.rBase ?? 0.6) + (s.rDepth ?? 1.7) * k) * (1 + 0.4 * y) * d,
+        white: 0.66 - 0.56 * k - 0.1 * y
       });
     }
   }
-  G(s, d, r, e.rMin);
+  U(e, u, i, s.rMin);
 };
-function Qt(s) {
-  return s * s * (3 - 2 * s);
+function en(e) {
+  return e * e * (3 - 2 * e);
 }
-function At(s) {
-  const t = s.length, n = [];
-  let r = 0;
-  for (let e = 0; e < t; e++) {
-    const o = s[e], i = s[(e + 1) % t], a = Math.hypot(i[0] - o[0], i[1] - o[1]);
-    n.push(a), r += a;
+function It(e) {
+  const t = e.length, n = [];
+  let i = 0;
+  for (let s = 0; s < t; s++) {
+    const o = e[s], r = e[(s + 1) % t], a = Math.hypot(r[0] - o[0], r[1] - o[1]);
+    n.push(a), i += a;
   }
-  return (e) => {
-    let o = e * r, i = 0;
-    for (; o > n[i] && i < t - 1; )
-      o -= n[i], i++;
-    const a = s[i], h = s[(i + 1) % t], M = n[i] ? Math.min(1, o / n[i]) : 0;
-    return [a[0] + (h[0] - a[0]) * M, a[1] + (h[1] - a[1]) * M];
+  return (s) => {
+    let o = s * i, r = 0;
+    for (; o > n[r] && r < t - 1; )
+      o -= n[r], r++;
+    const a = e[r], c = e[(r + 1) % t], d = n[r] ? Math.min(1, o / n[r]) : 0;
+    return [a[0] + (c[0] - a[0]) * d, a[1] + (c[1] - a[1]) * d];
   };
 }
-const tn = (s) => {
-  const t = -Math.PI / 2 + s * 2 * Math.PI;
+const sn = (e) => {
+  const t = -Math.PI / 2 + e * 2 * Math.PI;
   return [Math.cos(t) * 0.24, Math.sin(t) * 0.24];
-}, nn = At([
+}, on = It([
   [0, -0.26],
   [0.24, 0.16],
   [-0.24, 0.16]
-]), en = At([
+]), an = It([
   [0, -0.2],
   [0.2, -0.2],
   [0.2, 0.2],
   [-0.2, 0.2],
   [-0.2, -0.2]
-]), ut = [tn, nn, en];
-function sn(s) {
-  return Math.max(6, Math.round(34 * s));
+]), ht = [sn, on, an];
+function rn(e) {
+  return Math.max(6, Math.round(34 * e));
 }
-const pt = 1.4, It = 0.9, lt = pt + It;
-function Dt(s, t) {
-  const n = ut.length, r = s % (lt * n), e = Math.floor(r / lt), o = r - e * lt, i = o > pt ? Qt((o - pt) / It) : 0, a = t.spread ?? 1, h = ut[e], M = ut[(e + 1) % n], d = 160, f = [];
-  for (let c = 0; c < d; c++) {
-    const l = c / d, g = h(l), b = M(l);
-    f.push([(g[0] + (b[0] - g[0]) * i) * a, (g[1] + (b[1] - g[1]) * i) * a]);
+const dt = 1.4, Et = 0.9, ut = dt + Et;
+function Ot(e, t) {
+  const n = ht.length, i = e % (ut * n), s = Math.floor(i / ut), o = i - s * ut, r = o > dt ? en((o - dt) / Et) : 0, a = t.spread ?? 1, c = ht[s], d = ht[(s + 1) % n], u = 160, M = [];
+  for (let h = 0; h < u; h++) {
+    const p = h / u, g = c(p), b = d(p);
+    M.push([(g[0] + (b[0] - g[0]) * r) * a, (g[1] + (b[1] - g[1]) * r) * a]);
   }
-  const u = 1 + 0.02 * Math.sin(o * 3.1);
-  return { points: f, pulse: u };
+  const l = 1 + 0.02 * Math.sin(o * 3.1);
+  return { points: M, pulse: l };
 }
-const on = (s, t, n, r, e) => {
-  const { points: o, pulse: i } = Dt(n, e), a = o.length, h = [];
-  let M = 0;
+const cn = (e, t, n, i, s) => {
+  const { points: o, pulse: r } = Ot(n, s), a = o.length, c = [];
+  let d = 0;
   for (let b = 0; b < a; b++) {
-    const p = o[b], v = o[(b + 1) % a], m = Math.hypot(v[0] - p[0], v[1] - p[1]);
-    h.push(m), M += m;
+    const f = o[b], v = o[(b + 1) % a], m = Math.hypot(v[0] - f[0], v[1] - f[1]);
+    c.push(m), d += m;
   }
-  const d = sn(e.iconD ?? 1), f = (e.rDot ?? 0.021) * 1.35 * (e.spread ?? 1), u = [], c = t / 2;
-  let l = 0, g = 0;
-  for (let b = 0; b < d; b++) {
-    const p = b / d * M;
-    for (; g + h[l] < p && l < a - 1; )
-      g += h[l], l++;
-    const v = o[l], m = o[(l + 1) % a], x = h[l] ? Math.min(1, (p - g) / h[l]) : 0, y = (v[0] + (m[0] - v[0]) * x) * i, k = (v[1] + (m[1] - v[1]) * x) * i;
-    u.push({
-      x: c + y * t,
-      y: c + k * t,
+  const u = rn(s.iconD ?? 1), M = (s.rDot ?? 0.021) * 1.35 * (s.spread ?? 1), l = [], h = t / 2;
+  let p = 0, g = 0;
+  for (let b = 0; b < u; b++) {
+    const f = b / u * d;
+    for (; g + c[p] < f && p < a - 1; )
+      g += c[p], p++;
+    const v = o[p], m = o[(p + 1) % a], w = c[p] ? Math.min(1, (f - g) / c[p]) : 0, P = (v[0] + (m[0] - v[0]) * w) * r, R = (v[1] + (m[1] - v[1]) * w) * r;
+    l.push({
+      x: h + P * t,
+      y: h + R * t,
       z: 0,
-      r: Math.max(0.35, f * t),
+      r: Math.max(0.35, M * t),
       white: 0.1
     });
   }
-  G(s, u, r, e.rMin);
-}, X = Math.PI * 2;
-function st(s, t) {
-  return s ? `rgba(250,250,250,${t})` : `rgba(24,24,27,${t})`;
+  U(e, l, i, s.rMin);
+}, F = Math.PI * 2, Dt = 0.14, Bt = 0.44;
+function pt(e, t) {
+  const n = tt(t);
+  return e ? `rgba(250,250,250,${n})` : `rgba(24,24,27,${n})`;
 }
-function Q(s, t, n, r, e, o, i = !0) {
-  s.beginPath();
-  for (let a = 0; a <= n; a++) {
-    const [h, M] = t(a / n);
-    a === 0 ? s.moveTo(h, M) : s.lineTo(h, M);
+function ft(e, t, n, i, s, o, r = !0, a = 0.72) {
+  e.beginPath();
+  for (let d = 0; d <= n; d++) {
+    const [u, M] = t(d / n);
+    d === 0 ? e.moveTo(u, M) : e.lineTo(u, M);
   }
-  i && s.closePath(), s.strokeStyle = st(r, e), s.lineWidth = o, s.lineCap = "round", s.lineJoin = "round", s.stroke();
+  r && e.closePath();
+  const c = tt(s, a);
+  e.strokeStyle = i ? `rgba(250,250,250,${c})` : `rgba(24,24,27,${c})`, e.lineWidth = o, e.lineCap = "round", e.lineJoin = "round", e.stroke();
 }
-function K(s, t, n, r, e, o, i, a, h, M = 0) {
-  if (Q(
-    s,
+function K(e, t, n, i, s, o, r, a, c, d = 0) {
+  ft(
+    e,
     (u) => {
-      const [c, l] = t(u);
-      return [c, l];
+      const [M, l] = t(u);
+      return [M, l];
     },
     n,
-    r,
-    e,
-    i
-  ), h == null) {
-    s.beginPath();
+    i,
+    s,
+    r
+  );
+  {
+    e.beginPath();
     let u = !1;
-    for (let c = 0; c <= n; c++) {
-      const [l, g, b] = t(c / n);
-      if (b < 0) {
+    for (let M = 0; M <= n; M++) {
+      const [l, h, p] = t(M / n);
+      if (p < 0) {
         u = !1;
         continue;
       }
-      u ? s.lineTo(l, g) : (s.moveTo(l, g), u = !0);
+      u ? e.lineTo(l, h) : (e.moveTo(l, h), u = !0);
     }
-    s.strokeStyle = st(r, o), s.lineWidth = a, s.lineCap = "round", s.lineJoin = "round", s.stroke();
+    e.strokeStyle = pt(i, o), e.lineWidth = a, e.lineCap = "round", e.lineJoin = "round", e.stroke();
     return;
   }
-  const d = 16, f = Math.max(3, Math.round(n / d));
-  for (let u = 0; u < d; u++) {
-    const c = u / d, l = (u + 1) / d, g = (c + l) / 2, [, , b] = t(g);
-    if (b < -0.08)
-      continue;
-    const p = Math.min(1, Math.max(0, (b + 0.08) / 1.08)), v = Math.min(
-      1,
-      Math.max(
-        0,
-        0.62 + 0.25 * Math.sin(
-          h * 9.2 + M * 1.71 + u * 2.37
-        ) + 0.13 * Math.sin(
-          h * 14.3 - M * 0.83 + u * 4.11
-        )
-      )
-    );
-    Q(
-      s,
-      (m) => {
-        const [x, y] = t(c + (l - c) * m);
-        return [x, y];
-      },
-      f,
-      r,
-      o * p * (0.48 + 0.52 * v),
-      i + (a - i) * p * (0.76 + 0.24 * v),
-      !1
-    );
-  }
 }
-function ot(s) {
-  return s >= 128 ? [17, 11] : s >= 96 ? [14, 9] : s >= 64 ? [12, 8] : [6, 4];
+function ot(e) {
+  return e >= 128 ? [29, 19] : e >= 96 ? [24, 16] : e >= 64 ? [20, 14] : [11, 8];
 }
-function at(s, t, n, r, e, o, i, a, h) {
-  const M = t / 2, d = q(r, e, M, M, o), f = Math.max(0.38, t / 190), u = t >= 96 ? 80 : 48;
-  for (let c = 0; c < i; c++) {
-    const l = -Math.PI / 2 + c / Math.max(1, i - 1) * Math.PI;
+function at(e, t, n, i, s, o, r, a, c) {
+  const d = t / 2, u = X(i, s, d, d, o), M = Math.max(0.34, t / 215), l = t >= 96 ? 80 : 48;
+  for (let h = 0; h < r; h++) {
+    const p = -Math.PI / 2 + h / Math.max(1, r - 1) * Math.PI;
     K(
-      s,
+      e,
       (g) => {
-        const b = g * X - Math.PI / 2, p = Math.sin(b);
-        return d(
-          p * Math.cos(l),
+        const b = g * F - Math.PI / 2, f = Math.sin(b);
+        return u(
+          f * Math.cos(p),
           Math.cos(b),
-          p * Math.sin(l)
+          f * Math.sin(p)
         );
       },
-      u,
+      l,
       n,
-      h * 0.5,
-      h,
-      f * 0.72,
-      f * 1.15
+      c * 0.09,
+      c * 0.82,
+      M * 0.52,
+      M * 0.98
     );
   }
-  for (let c = 0; c < a; c++) {
-    const l = -Math.PI / 2 + (c + 1) / (a + 1) * Math.PI, g = Math.cos(l);
+  for (let h = 0; h < a; h++) {
+    const p = -Math.PI / 2 + (h + 1) / (a + 1) * Math.PI, g = Math.cos(p);
     K(
-      s,
+      e,
       (b) => {
-        const p = b * X;
-        return d(
-          Math.cos(p) * g,
-          Math.sin(l),
-          Math.sin(p) * g
+        const f = b * F;
+        return u(
+          Math.cos(f) * g,
+          Math.sin(p),
+          Math.sin(f) * g
         );
       },
-      u,
+      l,
       n,
-      h * 0.45,
-      h * 0.9,
-      f * 0.72,
-      f * 1.15
+      c * 0.08,
+      c * 0.76,
+      M * 0.52,
+      M * 0.98
     );
   }
 }
-function an(s, t, n, r, e, o = 1) {
-  s.fillStyle = st(e, o), s.beginPath(), s.arc(t, n, r, 0, X), s.fill();
+function hn(e, t, n, i, s, o = 1) {
+  e.fillStyle = pt(s, o), e.beginPath(), e.arc(t, n, i, 0, F), e.fill();
 }
-const rn = (s, t, n, r, e) => {
-  const o = 0.94 + 0.055 * Math.sin(n * 0.85), [i, a] = ot(t);
+const un = (e, t, n, i, s) => {
+  const o = 0.94 + 0.055 * Math.sin(n * 0.85), [r, a] = ot(t);
   at(
-    s,
+    e,
     t,
-    r,
+    i,
     n * 0.08,
     0.34,
     t * 0.38 * o,
-    i,
+    r,
     a,
     0.55
   );
-}, cn = (s, t, n, r, e) => {
-  const o = t / 2, i = t * ((e.lobeGap ?? 0.17) + (e.gapPulse ?? 0.012) * Math.sin(n * 1.15)), a = t * (e.lobeRadius ?? 0.2), h = t >= 64 ? Math.max(2, Math.round(e.laneCount ?? 3)) : 2, M = t >= 64 ? Math.max(2, Math.round(e.bridgeStrands ?? 3)) : 2, d = n * (e.signalSpeed ?? 0.28) % 1, [f, u] = ot(t);
+}, ln = (e, t, n, i, s) => {
+  const o = t / 2, r = t * ((s.lobeGap ?? 0.17) + (s.gapPulse ?? 0.012) * Math.sin(n * 1.15)), a = t * (s.lobeRadius ?? 0.2), c = t >= 64 ? Math.max(2, Math.round(s.laneCount ?? 3)) : 2, d = t >= 64 ? Math.max(2, Math.round(s.bridgeStrands ?? 3)) : 2, u = n * (s.signalSpeed ?? 0.28) % 1, [M, l] = ot(t);
   at(
-    s,
+    e,
     t,
-    r,
+    i,
     n * 0.07,
     0.34 + 0.055 * Math.sin(n * 0.3),
-    t * (e.bodyRadius ?? 0.39),
-    f,
-    u,
+    t * (s.bodyRadius ?? 0.39),
+    M,
+    l,
     0.3
   );
-  for (const c of [-1, 1]) {
-    const l = q(
-      n * 0.48 * c,
+  for (const h of [-1, 1]) {
+    const p = X(
+      n * 0.48 * h,
       0.46,
-      o + i * c,
+      o + r * h,
       o,
       a
-    ), g = (p, v) => {
-      const m = (p - (h - 1) / 2) * 0.38, x = Math.sqrt(Math.max(0, 1 - m * m)), y = v * X + p * 0.18;
-      return l(
-        Math.cos(y) * x,
+    ), g = (f, v) => {
+      const m = (f - (c - 1) / 2) * 0.38, w = Math.sqrt(Math.max(0, 1 - m * m)), P = v * F + f * 0.18;
+      return p(
+        Math.cos(P) * w,
         m,
-        Math.sin(y) * x
+        Math.sin(P) * w
       );
-    }, b = (p, v) => {
-      const m = -Math.PI / 2 + p / (h - 1) * Math.PI, x = v * X - Math.PI / 2, y = Math.sin(x);
-      return l(
-        y * Math.cos(m),
-        Math.cos(x),
-        y * Math.sin(m)
+    }, b = (f, v) => {
+      const m = -Math.PI / 2 + f / (c - 1) * Math.PI, w = v * F - Math.PI / 2, P = Math.sin(w);
+      return p(
+        P * Math.cos(m),
+        Math.cos(w),
+        P * Math.sin(m)
       );
     };
-    for (let p = 0; p < h; p++)
+    for (let f = 0; f < c; f++)
       K(
-        s,
-        (v) => g(p, v),
+        e,
+        (v) => g(f, v),
         t >= 96 ? 72 : 44,
-        r,
+        i,
         0.34,
         0.72,
         Math.max(0.34, t / 205),
         Math.max(0.48, t / 145)
       ), K(
-        s,
-        (v) => b(p, v),
+        e,
+        (v) => b(f, v),
         t >= 96 ? 72 : 44,
-        r,
+        i,
         0.3,
         0.66,
         Math.max(0.32, t / 215),
         Math.max(0.46, t / 155)
       );
-    for (let p = 0; p < M; p++) {
-      const v = c < 0 ? 1 : -1, m = (1 + p / M * 0.68 + d * v) % 1, x = p % h, [y, k, S] = g(
-        x,
-        m
-      ), P = (S + 1) / 2, C = Math.max(0.8, t / 54), w = Math.max(
-        0.5,
-        C * (0.35 + 0.65 * P)
-      );
-      an(
-        s,
-        y,
-        k,
+    for (let f = 0; f < d; f++) {
+      const v = h < 0 ? 1 : -1, m = (1 + f / d * 0.68 + u * v) % 1, w = f % c, [P, R, x] = g(
         w,
-        r,
-        0.42 + 0.58 * P
+        m
+      ), A = (x + 1) / 2, k = Math.max(0.8, t / 54), y = Math.max(
+        0.5,
+        k * (0.35 + 0.65 * A)
+      );
+      hn(
+        e,
+        P,
+        R,
+        y,
+        i,
+        0.42 + 0.58 * A
       );
     }
   }
-}, hn = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2 * 0.82, a = q(0.5, 0.42, o, o, i), h = Math.max(2, Math.round(e.latRings ?? 17)), M = t >= 96 ? 88 : 52, d = Math.max(0.4, t / 175);
-  for (let c = 0; c <= h; c++) {
-    const l = -Math.PI / 2 + c / h * Math.PI, g = Math.cos(l), b = Math.sin(l);
-    Q(
-      s,
-      (p) => {
-        const v = p * X, [m, x] = a(
-          g * Math.cos(v),
-          b,
-          g * Math.sin(v)
-        );
-        return [m, x];
-      },
-      M,
-      r,
-      e.dimBase ?? 0.45,
+}, dn = (e, t, n, i, s) => {
+  const o = t / 2, r = t >= 128 ? 12 : t >= 96 ? 9 : t >= 64 ? 5 : 2, a = Math.round((r + 1) * 1.55), c = t >= 96 ? 88 : 52, d = Math.max(0.34, t / 215), u = t * 0.4, M = [], l = 0.5, h = 0.38, p = Math.cos(l), g = Math.sin(l), b = Math.cos(h), f = Math.sin(h);
+  e.save(), e.beginPath(), e.arc(o, o, u, 0, F), e.clip();
+  for (let w = 0; w < a; w++) {
+    const P = w / Math.max(1, a - 1), R = -Math.PI / 2 + P * Math.PI, x = Math.cos(R), A = Math.sin(R), k = 0.62 * Math.sin(-w * 0.52) + 0.38 * Math.sin(w * 0.83), y = Math.pow(Math.abs(x), 0.72), S = t * 0.4 * (1 + 0.055 * k * y), C = 0.56 + 0.24 * P, O = (T) => {
+      const L = T * F, B = x * Math.cos(L) * S, I = A * S, E = x * Math.sin(L) * S, D = B * p + E * g, N = -B * g + E * p;
+      return [
+        o + D,
+        o + (I * b - N * f),
+        (I * f + N * b) / (t * 0.4)
+      ];
+    };
+    M.push(O), K(
+      e,
+      O,
+      c,
+      i,
+      C * 0.22,
+      C * 0.9,
+      d * 0.52,
       d
     );
   }
-  const f = 0.34 * (e.scanMul ?? 1), u = t >= 96 ? 16 : 10;
-  for (let c = 1; c < h; c++) {
-    const l = -Math.PI / 2 + c / h * Math.PI, g = Math.cos(l), b = Math.sin(l), p = 0.5 + 0.5 * Math.sin(n * f * 2.2 + c * 1.73), v = 0.5 + 0.39 * Math.sin(n * f * 0.72 + c * 2.41), m = 0.035 + 0.025 * p, x = v - m, y = v + m;
-    Q(
-      s,
-      (k) => {
-        const S = (x + (y - x) * k) * X, [P, C] = a(
-          g * Math.cos(S),
-          b,
-          g * Math.sin(S)
-        );
-        return [P, C];
+  const v = 0.34 * (s.scanMul ?? 1), m = t >= 96 ? 16 : 10;
+  for (let w = 1; w < a - 1; w++) {
+    const P = 0.5 + 0.5 * Math.sin(n * v * 2.2 + w * 1.73), R = 0.5 + 0.39 * Math.sin(n * v * 0.72 + w * 2.41), x = 0.035 + 0.025 * P, A = R - x, k = R + x;
+    ft(
+      e,
+      (y) => {
+        const [S, C] = M[w](A + (k - A) * y);
+        return [S, C];
       },
-      u,
-      r,
-      0.2 + 0.76 * p,
-      d * (1.25 + 0.75 * p),
-      !1
+      m,
+      i,
+      0.18 + 0.62 * P,
+      d * (0.96 + 0.34 * P),
+      !1,
+      0.92
     );
   }
-}, un = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2 * 0.82, a = q(
+  e.restore();
+}, Mn = (e, t, n, i, s) => {
+  const o = t / 2, r = t / 2 * 0.82, a = X(
     n * 0.55,
     0.35 + 0.1 * Math.sin(n * 0.9),
     o,
     o,
-    i
-  ), h = Math.max(1, Math.round(e.moveCount ?? 14)), M = Rt(h), d = Vt(n, h, 0.42, 1.2), f = Math.max(2, Math.round(e.latRings ?? 15)), u = t >= 96 ? 96 : 56;
-  for (let c = 0; c <= f; c++) {
-    const l = -Math.PI / 2 + c / f * Math.PI, g = Math.cos(l), b = Math.sin(l);
-    let p = null;
-    s.beginPath();
-    for (let v = 0; v <= u; v++) {
-      const m = v / u * X, [x, y, k] = Lt(
+    r
+  ), c = Math.max(1, Math.round(s.moveCount ?? 14)), d = Vt(c), u = Lt(n, c, 0.42, 1.2), M = Math.max(2, Math.round(s.latRings ?? 15)), l = t >= 96 ? 96 : 56;
+  for (let h = 0; h <= M; h++) {
+    const p = -Math.PI / 2 + h / M * Math.PI, g = Math.cos(p), b = Math.sin(p);
+    let f = null;
+    e.beginPath();
+    for (let v = 0; v <= l; v++) {
+      const m = v / l * F, [w, P, R] = Tt(
         [
           g * Math.cos(m),
           b,
           g * Math.sin(m)
         ],
-        M,
-        d
-      ), [S, P] = a(x, y, k), C = p ? Math.hypot(S - p[0], P - p[1]) : 0;
-      !p || C > t * 0.2 ? s.moveTo(S, P) : s.lineTo(S, P), p = [S, P];
+        d,
+        u
+      ), [x, A] = a(w, P, R), k = f ? Math.hypot(x - f[0], A - f[1]) : 0;
+      !f || k > t * 0.2 ? e.moveTo(x, A) : e.lineTo(x, A), f = [x, A];
     }
-    s.closePath(), s.strokeStyle = st(r, 0.56 + 0.24 * (c / f)), s.lineWidth = Math.max(0.42, t / 160), s.lineCap = "round", s.lineJoin = "round", s.stroke();
+    e.closePath(), e.strokeStyle = pt(i, 0.56 + 0.24 * (h / M)), e.lineWidth = Math.max(0.42, t / 160), e.lineCap = "round", e.lineJoin = "round", e.stroke();
   }
-}, ln = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2 * 0.78, a = e.spin ?? 1, h = q(n * 0.1 * a, 0.3, o, o, 1), M = n * 0.24 * a, d = 0.55 + 0.3 * Math.sin(n * 0.18) * a, f = Math.cos(M), u = 0, c = Math.sin(M), l = -c * Math.sin(d), g = Math.cos(d), b = f * Math.sin(d), p = u * b - c * g, v = c * l - f * b, m = f * g - u * l, x = Math.max(1, Math.round(e.lanes ?? 5)), y = Math.max(1, Math.round(x * (e.bandMul ?? 1))), [k, S] = ot(t);
+}, pn = (e, t, n, i, s) => {
+  const o = t / 2, r = t / 2 * 0.78, a = s.spin ?? 1, c = X(n * 0.1 * a, 0.3, o, o, 1), d = n * 0.24 * a, u = 0.55 + 0.3 * Math.sin(n * 0.18) * a, M = Math.cos(d), l = 0, h = Math.sin(d), p = -h * Math.sin(u), g = Math.cos(u), b = M * Math.sin(u), f = l * b - h * g, v = h * p - M * b, m = M * g - l * p, w = Math.max(1, Math.round(s.lanes ?? 5)), P = Math.max(1, Math.round(w * (s.bandMul ?? 1))), [R, x] = ot(t);
   at(
-    s,
+    e,
     t,
-    r,
+    i,
     n * 0.1,
     0.3 + 0.055 * Math.sin(n * 0.3),
-    i,
-    k,
-    S,
+    r,
+    R,
+    x,
     0.18
   );
-  for (let P = 0; P < y; P++) {
-    const C = (P - (y - 1) / 2) * 0.075, w = Math.abs(P - (y - 1) / 2) / Math.max(1, (y - 1) / 2);
+  for (let A = 0; A < P; A++) {
+    const k = (A - (P - 1) / 2) * 0.075;
     K(
-      s,
-      (I) => {
-        const R = I * X, D = (0.16 * Math.sin(
-          R * 3 - n * 1.7 + P * 0.22
-        ) + 0.07 * Math.sin(R * 5 + n * 1.1)) * (e.wobMul ?? 1), T = C + D, O = f * Math.cos(R) + l * Math.sin(R) + p * T, B = u * Math.cos(R) + g * Math.sin(R) + v * T, L = c * Math.cos(R) + b * Math.sin(R) + m * T, E = Math.sqrt(O * O + B * B + L * L), [z, N, $] = h(
-          O / E * i,
-          B / E * i,
-          L / E * i
+      e,
+      (S) => {
+        const C = S * F, O = (0.16 * Math.sin(
+          C * 3 - n * 1.7 + A * 0.22
+        ) + 0.07 * Math.sin(C * 5 + n * 1.1)) * (s.wobMul ?? 1), T = k + O, L = M * Math.cos(C) + p * Math.sin(C) + f * T, B = l * Math.cos(C) + g * Math.sin(C) + v * T, I = h * Math.cos(C) + b * Math.sin(C) + m * T, E = Math.sqrt(L * L + B * B + I * I), [D, N, _] = c(
+          L / E * r,
+          B / E * r,
+          I / E * r
         );
-        return [z, N, $ / i];
+        return [D, N, _ / r];
       },
       t >= 96 ? 96 : 60,
-      r,
-      0.16 + 0.22 * (1 - w),
-      0.48 + 0.42 * (1 - w),
+      i,
+      Dt,
+      Bt,
       Math.max(0.32, t / 220),
       Math.max(0.5, t / 135)
     );
   }
-}, dn = (s, t, n, r, e) => {
-  const o = t / 2, i = Math.max(2, Math.round(e.shellCount ?? 3)), a = Math.max(
-    i,
-    Math.round(e.ribbonLineCount ?? 25)
-  ), h = Math.floor(a / i), M = a % i, [d, f] = ot(t);
-  at(
-    s,
-    t,
+}, fn = (e, t, n, i, s) => {
+  const o = t / 2, r = Math.max(2, Math.round(s.shellCount ?? 3)), a = Math.max(
     r,
+    Math.round(s.ribbonLineCount ?? 25)
+  ), c = Math.floor(a / r), d = a % r, [u, M] = ot(t);
+  at(
+    e,
+    t,
+    i,
     n * 0.1,
     0.34 + 0.055 * Math.sin(n * 0.3),
     t * 0.39,
-    d,
-    f,
+    u,
+    M,
     0.28
   );
-  for (let u = 0; u < i; u++) {
-    const c = n * (e.pulseSpeed ?? 0.17) * X + u / i * X, l = (1 - Math.cos(c)) / 2, g = t * (0.32 + 0.07 * l), b = 0.45 + 0.55 * ((1 + Math.sin(c)) / 2), p = n * 0.1 + u * 0.82, v = 0.5 + 0.12 * Math.sin(n * 0.25 + u), m = Math.cos(p), x = 0, y = Math.sin(p), k = -y * Math.sin(v), S = Math.cos(v), P = m * Math.sin(v), C = x * P - y * S, w = y * k - m * P, V = m * S - x * k, I = q(0, 0.18, o, o, g), R = h + (u < M ? 1 : 0), D = e.bandSpread ?? 0.075;
-    for (let T = 0; T < R; T++) {
-      const O = (T - (R - 1) / 2) * D, B = (L) => {
+  for (let l = 0; l < r; l++) {
+    const h = n * (s.pulseSpeed ?? 0.17) * F + l / r * F, p = (1 - Math.cos(h)) / 2, g = t * (0.32 + 0.07 * p), b = n * 0.1 + l * 0.82, f = 0.5 + 0.12 * Math.sin(n * 0.25 + l), v = Math.cos(b), m = 0, w = Math.sin(b), P = -w * Math.sin(f), R = Math.cos(f), x = v * Math.sin(f), A = m * x - w * R, k = w * P - v * x, y = v * R - m * P, S = X(0, 0.18, o, o, g), C = c + (l < d ? 1 : 0), O = s.bandSpread ?? 0.075;
+    for (let T = 0; T < C; T++) {
+      const L = (T - (C - 1) / 2) * O, B = (I) => {
         const E = (0.085 * Math.sin(
-          L * 3 - n * 1.15 + T * 0.24 + u
-        ) + 0.032 * Math.sin(L * 5 + n * 0.72 - u)) * (e.wobMul ?? 1), z = O + E, N = m * Math.cos(L) + k * Math.sin(L) + C * z, $ = x * Math.cos(L) + S * Math.sin(L) + w * z, j = y * Math.cos(L) + P * Math.sin(L) + V * z, Y = Math.sqrt(N * N + $ * $ + j * j), [F, U, _] = I(
+          I * 3 - n * 1.15 + T * 0.24 + l
+        ) + 0.032 * Math.sin(I * 5 + n * 0.72 - l)) * (s.wobMul ?? 1), D = L + E, N = v * Math.cos(I) + P * Math.sin(I) + A * D, _ = m * Math.cos(I) + R * Math.sin(I) + k * D, z = w * Math.cos(I) + x * Math.sin(I) + y * D, Y = Math.sqrt(N * N + _ * _ + z * z), [H, $, j] = S(
           N / Y,
-          $ / Y,
-          j / Y
+          _ / Y,
+          z / Y
         );
-        return [F, U, _];
+        return [H, $, j];
       };
       K(
-        s,
-        (L) => B(L * X),
+        e,
+        (I) => B(I * F),
         t >= 96 ? 88 : 52,
-        r,
-        0.16 + 0.22 * b,
-        0.42 + 0.46 * b,
+        i,
+        Dt,
+        Bt,
         Math.max(0.32, t / 220),
-        Math.max(0.5, t / 130),
-        n * ((e.shimmerSpeed ?? 0.55) / 0.55),
-        u * 11 + T
+        Math.max(0.5, t / 135)
       );
     }
   }
-}, Mn = (s, t, n, r, e) => {
-  const { points: o, pulse: i } = Dt(n, e), a = t / 2;
-  Q(
-    s,
-    (h) => {
-      const M = h * o.length, d = Math.floor(M) % o.length, f = (d + 1) % o.length, u = M - Math.floor(M), c = o[d], l = o[f];
+}, mn = (e, t, n, i, s) => {
+  const { points: o, pulse: r } = Ot(n, s), a = t / 2;
+  ft(
+    e,
+    (c) => {
+      const d = c * o.length, u = Math.floor(d) % o.length, M = (u + 1) % o.length, l = d - Math.floor(d), h = o[u], p = o[M];
       return [
-        a + (c[0] + (l[0] - c[0]) * u) * i * t,
-        a + (c[1] + (l[1] - c[1]) * u) * i * t
+        a + (h[0] + (p[0] - h[0]) * l) * r * t,
+        a + (h[1] + (p[1] - h[1]) * l) * r * t
       ];
     },
     o.length,
-    r,
+    i,
     0.94,
     Math.max(0.75, t / 90)
   );
 }, W = Math.PI * 2;
-function Et(s) {
-  return s >= 96 ? 96 : s >= 64 ? 72 : 48;
+function Nt(e) {
+  return e >= 96 ? 96 : e >= 64 ? 72 : 48;
 }
-function pn(s) {
-  return s >= 128 ? [17, 11] : s >= 96 ? [14, 9] : s >= 64 ? [12, 8] : [6, 4];
+function gn(e) {
+  return e >= 128 ? [29, 19] : e >= 96 ? [24, 16] : e >= 64 ? [20, 14] : [11, 8];
 }
-function dt(s, t) {
-  return s ? `rgba(250,250,250,${t})` : `rgba(24,24,27,${t})`;
+function lt(e, t) {
+  const n = tt(t);
+  return e ? `rgba(250,250,250,${n})` : `rgba(24,24,27,${n})`;
 }
-function fn(s, t, n) {
-  const r = Et(t);
-  s.beginPath();
-  for (let e = 0; e <= r; e++) {
-    const [o, i] = n.path(e / r), a = t / 2 + o * t, h = t / 2 + i * t;
-    e === 0 ? s.moveTo(a, h) : s.lineTo(a, h);
+function bn(e, t, n) {
+  const i = Nt(t);
+  e.beginPath();
+  for (let s = 0; s <= i; s++) {
+    const [o, r] = n.path(s / i), a = t / 2 + o * t, c = t / 2 + r * t;
+    s === 0 ? e.moveTo(a, c) : e.lineTo(a, c);
   }
-  s.closePath(), s.stroke();
+  e.closePath(), e.stroke();
 }
-function mn(s, t, n) {
+function vn(e, t, n) {
   if (!n.depthPath)
     return;
-  const r = Et(t);
-  s.beginPath();
-  let e = !1;
-  for (let o = 0; o <= r; o++) {
-    const [i, a, h] = n.depthPath(o / r);
-    if (h < 0) {
-      e = !1;
+  const i = Nt(t);
+  e.beginPath();
+  let s = !1;
+  for (let o = 0; o <= i; o++) {
+    const [r, a, c] = n.depthPath(o / i);
+    if (c < 0) {
+      s = !1;
       continue;
     }
-    const M = t / 2 + i * t, d = t / 2 + a * t;
-    e ? s.lineTo(M, d) : (s.moveTo(M, d), e = !0);
+    const d = t / 2 + r * t, u = t / 2 + a * t;
+    s ? e.lineTo(d, u) : (e.moveTo(d, u), s = !0);
   }
-  s.stroke();
+  e.stroke();
 }
-function Mt(s, t, n) {
+function wn(e, t) {
   return {
-    path: (r) => {
-      const [e, o] = s(r);
-      return [e, o];
+    path: (n) => {
+      const [i, s] = e(n);
+      return [i, s];
     },
-    depthPath: s,
-    alpha: t * 0.5,
-    width: n * 0.72,
-    nearAlpha: t,
-    nearWidth: n * 1.15
+    depthPath: e,
+    alpha: 0.14,
+    width: Math.max(0.32, t / 220),
+    nearAlpha: 0.44,
+    nearWidth: Math.max(0.5, t / 135)
   };
 }
-function Ot(s, t, n, r, e = 0.86, o) {
-  const i = t / 2, a = t * 0.405;
-  s.save(), s.lineCap = "round", s.lineJoin = "round", s.beginPath(), s.arc(i, i, a, 0, W), s.clip();
-  for (const h of r)
-    s.strokeStyle = dt(n, h.alpha), s.lineWidth = h.width ?? Math.max(0.42, t / 150), fn(s, t, h), h.depthPath && (s.strokeStyle = dt(
+function wt(e, t, n) {
+  return {
+    path: (i) => {
+      const [s, o] = e(i);
+      return [s, o];
+    },
+    depthPath: e,
+    alpha: t * 0.08,
+    width: n * 0.52,
+    nearAlpha: t * 0.95,
+    nearWidth: n
+  };
+}
+function _t(e, t, n, i, s = 0.86, o) {
+  const r = t / 2, a = t * 0.405;
+  e.save(), e.lineCap = "round", e.lineJoin = "round", e.beginPath(), e.arc(r, r, a, 0, W), e.clip();
+  for (const c of i)
+    e.strokeStyle = lt(n, c.alpha), e.lineWidth = c.width ?? Math.max(0.42, t / 150), bn(e, t, c), c.depthPath && (e.strokeStyle = lt(
       n,
-      h.nearAlpha ?? Math.min(1, h.alpha * 1.8)
-    ), s.lineWidth = h.nearWidth ?? (h.width ?? Math.max(0.42, t / 150)) * 1.2, mn(s, t, h));
-  s.restore(), !(e <= 0) && (s.strokeStyle = dt(n, e), s.lineWidth = Math.max(0.5, t / 135), s.beginPath(), s.arc(i, i, a, 0, W), s.stroke());
+      c.nearAlpha ?? Math.min(1, c.alpha * 1.8)
+    ), e.lineWidth = c.nearWidth ?? (c.width ?? Math.max(0.42, t / 150)) * 1.2, vn(e, t, c));
+  e.restore(), !(s <= 0) && (e.strokeStyle = lt(n, s), e.lineWidth = Math.max(0.5, t / 135), e.beginPath(), e.arc(r, r, a, 0, W), e.stroke());
 }
-function yt(s, t, n, r, e, o, i, a) {
-  const h = t % 2 === 0 ? 1 : -1, M = t / e * Math.PI, d = M + o * 0.19 * h, f = 0.5 + t * 0.18 + 0.08 * Math.sin(o * 0.32 + M), u = Math.cos(d), c = 0, l = Math.sin(d), g = -l * Math.sin(f), b = Math.cos(f), p = u * Math.sin(f), v = c * p - l * b, m = l * g - u * p, x = u * b - c * g, y = s * W, k = (n - (r - 1) / 2) * i, S = (0.105 * Math.sin(
-    y * 3 - o * 1.35 * h + n * 0.2 + M
-  ) + 0.04 * Math.sin(y * 5 + o * 0.78 - M)) * a, P = k + S, C = u * Math.cos(y) + g * Math.sin(y) + v * P, w = c * Math.cos(y) + b * Math.sin(y) + m * P, V = l * Math.cos(y) + p * Math.sin(y) + x * P, I = Math.sqrt(C * C + w * w + V * V), R = C / I, D = w / I, T = V / I, O = o * 0.08, B = 0.3, L = Math.cos(O), E = Math.sin(O), z = R * L + T * E, N = -R * E + T * L, $ = Math.cos(B), j = Math.sin(B);
+function yt(e, t, n, i, s, o, r, a) {
+  const c = t % 2 === 0 ? 1 : -1, d = t / s * Math.PI, u = d + o * 0.19 * c, M = 0.5 + t * 0.18 + 0.08 * Math.sin(o * 0.32 + d), l = Math.cos(u), h = 0, p = Math.sin(u), g = -p * Math.sin(M), b = Math.cos(M), f = l * Math.sin(M), v = h * f - p * b, m = p * g - l * f, w = l * b - h * g, P = e * W, R = (n - (i - 1) / 2) * r, x = (0.105 * Math.sin(
+    P * 3 - o * 1.35 * c + n * 0.2 + d
+  ) + 0.04 * Math.sin(P * 5 + o * 0.78 - d)) * a, A = R + x, k = l * Math.cos(P) + g * Math.sin(P) + v * A, y = h * Math.cos(P) + b * Math.sin(P) + m * A, S = p * Math.cos(P) + f * Math.sin(P) + w * A, C = Math.sqrt(k * k + y * y + S * S), O = k / C, T = y / C, L = S / C, B = o * 0.08, I = 0.3, E = Math.cos(B), D = Math.sin(B), N = O * E + L * D, _ = -O * D + L * E, z = Math.cos(I), Y = Math.sin(I);
   return [
-    z * 0.405,
-    (D * $ - N * j) * 0.405,
-    D * j + N * $
+    N * 0.405,
+    (T * z - _ * Y) * 0.405,
+    T * Y + _ * z
   ];
 }
-function Bt(s, t, n, r) {
-  const e = r * 0.08, o = 0.3 + 0.055 * Math.sin(r * 0.3), i = Math.cos(e), a = Math.sin(e), h = s * i + n * a, M = -s * a + n * i, d = Math.cos(o), f = Math.sin(o);
+function Yt(e, t, n, i) {
+  const s = i * 0.08, o = 0.3 + 0.055 * Math.sin(i * 0.3), r = Math.cos(s), a = Math.sin(s), c = e * r + n * a, d = -e * a + n * r, u = Math.cos(o), M = Math.sin(o);
   return [
-    h * 0.405,
-    (t * d - M * f) * 0.405,
-    t * f + M * d
+    c * 0.405,
+    (t * u - d * M) * 0.405,
+    t * M + d * u
   ];
 }
-function gn(s, t, n) {
-  const r = s * W - Math.PI / 2, e = Math.sin(r);
-  return Bt(
-    e * Math.cos(t),
-    Math.cos(r),
-    e * Math.sin(t),
+function yn(e, t, n) {
+  const i = e * W - Math.PI / 2, s = Math.sin(i);
+  return Yt(
+    s * Math.cos(t),
+    Math.cos(i),
+    s * Math.sin(t),
     n
   );
 }
-function bn(s, t, n) {
-  const r = s * W, e = Math.cos(t);
-  return Bt(
-    Math.cos(r) * e,
+function Pn(e, t, n) {
+  const i = e * W, s = Math.cos(t);
+  return Yt(
+    Math.cos(i) * s,
     Math.sin(t),
-    Math.sin(r) * e,
+    Math.sin(i) * s,
     n
   );
 }
-const vn = (s, t, n, r, e) => {
-  const o = Math.max(4, Math.round(e.orbitN ?? 12)), i = Math.max(2, Math.round(e.bandCount ?? 2)), a = Math.max(2, Math.round(o / i)), h = Math.max(1, Math.round(e.particles ?? 5)), M = Z(t, e.rsPow ?? 0.6), d = [], [f, u] = pn(t);
-  for (let c = 0; c < f; c++) {
-    const l = c / Math.max(1, f - 1), g = -Math.PI / 2 + l * Math.PI, b = (p) => gn(
+const xn = (e, t, n, i, s) => {
+  const o = Math.max(4, Math.round(s.orbitN ?? 12)), r = Math.max(2, Math.round(s.bandCount ?? 2)), a = Math.max(2, Math.round(o / r)), c = Math.max(1, Math.round(s.particles ?? 5)), d = Z(t, s.rsPow ?? 0.6), u = [], [M, l] = gn(t);
+  for (let h = 0; h < M; h++) {
+    const p = h / Math.max(1, M - 1), g = -Math.PI / 2 + p * Math.PI, b = (f) => yn(
+      f,
+      g,
+      n
+    );
+    u.push(wt(
+      b,
+      0.09 + 0.07 * (1 - Math.abs(p * 2 - 1)),
+      Math.max(0.38, t / 190)
+    ));
+  }
+  for (let h = 0; h < l; h++) {
+    const p = -Math.PI / 2 + (h + 1) / (l + 1) * Math.PI, g = (b) => Pn(
+      b,
       p,
-      g,
       n
     );
-    d.push(Mt(
-      b,
-      0.2 + 0.14 * (1 - Math.abs(l * 2 - 1)),
+    u.push(wt(
+      g,
+      0.1,
       Math.max(0.38, t / 190)
     ));
   }
-  for (let c = 0; c < u; c++) {
-    const l = -Math.PI / 2 + (c + 1) / (u + 1) * Math.PI, g = (b) => bn(
-      b,
-      l,
-      n
-    );
-    d.push(Mt(
-      g,
-      0.22,
-      Math.max(0.38, t / 190)
-    ));
-  }
-  for (let c = 0; c < i; c++)
-    for (let l = 0; l < a; l++) {
-      const g = Math.abs(l - (a - 1) / 2) / Math.max(1, (a - 1) / 2), b = (p) => yt(
-        p,
-        c,
-        l,
-        a,
-        i,
-        n,
-        e.bandSpread ?? 0.064,
-        e.wobMul ?? 1
-      );
-      d.push(Mt(
+  for (let h = 0; h < r; h++)
+    for (let p = 0; p < a; p++) {
+      const g = (b) => yt(
         b,
-        0.48 + 0.32 * (1 - g) + c * 0.04,
-        Math.max(0.45, t / 145)
+        h,
+        p,
+        a,
+        r,
+        n,
+        s.bandSpread ?? 0.064,
+        s.wobMul ?? 1
+      );
+      u.push(wn(
+        g,
+        t
       ));
     }
-  Ot(s, t, r, d, 0);
-  for (let c = 0; c < i; c++) {
-    const l = c % 2 === 0 ? 1 : -1, g = c / i * Math.PI;
-    for (let b = 0; b < h; b++) {
-      const p = b % a, v = n * (0.72 + c * 0.08) * l + b / h * W + g, [m, x, y] = yt(
+  _t(e, t, i, u, 0);
+  for (let h = 0; h < r; h++) {
+    const p = h % 2 === 0 ? 1 : -1, g = h / r * Math.PI;
+    for (let b = 0; b < c; b++) {
+      const f = b % a, v = n * (0.72 + h * 0.08) * p + b / c * W + g, [m, w, P] = yt(
         v / W,
-        c,
-        p,
+        h,
+        f,
         a,
-        i,
+        r,
         n,
-        e.bandSpread ?? 0.064,
-        e.wobMul ?? 1
-      ), k = (y + 1) / 2, S = Math.min(1, Math.max(0, 0.14 - 0.1 * k)), P = Math.round((r ? 1 - S : S) * 255), w = ((e.partR ?? 1.55) + (e.partRDepth ?? 2.1)) * M * (0.35 + 0.65 * k), V = 0.42 + 0.58 * k;
-      s.fillStyle = `rgba(${P},${P},${P},${V})`, s.beginPath(), s.arc(
+        s.bandSpread ?? 0.064,
+        s.wobMul ?? 1
+      ), R = (P + 1) / 2, x = Math.min(1, Math.max(0, 0.14 - 0.1 * R)), A = Math.round((i ? 1 - x : x) * 255), y = ((s.partR ?? 1.55) + (s.partRDepth ?? 2.1)) * d * (0.35 + 0.65 * R), S = tt(0.42 + 0.58 * R);
+      e.fillStyle = `rgba(${A},${A},${A},${S})`, e.beginPath(), e.arc(
         t / 2 + m * t,
-        t / 2 + x * t,
-        w,
+        t / 2 + w * t,
+        y,
         0,
         W
-      ), s.fill();
+      ), e.fill();
     }
   }
-}, yn = (s, t, n, r, e) => {
-  const o = Math.max(2, Math.round(e.rings ?? 15)), i = [];
+}, An = (e, t, n, i, s) => {
+  const o = Math.max(2, Math.round(s.rings ?? 15)), r = [];
   for (let a = 0; a <= o; a++) {
-    const h = -Math.PI / 2 + a / o * Math.PI, M = Math.cos(h), d = Math.sin(h), f = 0.62 * Math.sin(n * 2.1 - a * 0.52) + 0.38 * Math.sin(n * 1.27 + a * 0.83), u = Math.pow(Math.abs(M), 0.72), c = 0.4 * (0.92 + 0.075 * f * u);
-    i.push({
-      path: (l) => {
-        const g = l * W, b = M * Math.cos(g) * c, p = d * c, v = M * Math.sin(g) * c, m = n * 0.18, x = 0.38, y = Math.cos(m), k = Math.sin(m), S = b * y + v * k, P = -b * k + v * y, C = Math.cos(x), w = Math.sin(x);
+    const c = -Math.PI / 2 + a / o * Math.PI, d = Math.cos(c), u = Math.sin(c), M = 0.62 * Math.sin(n * 2.1 - a * 0.52) + 0.38 * Math.sin(n * 1.27 + a * 0.83), l = Math.pow(Math.abs(d), 0.72), h = 0.4 * (0.92 + 0.075 * M * l);
+    r.push({
+      path: (p) => {
+        const g = p * W, b = d * Math.cos(g) * h, f = u * h, v = d * Math.sin(g) * h, m = n * 0.18, w = 0.38, P = Math.cos(m), R = Math.sin(m), x = b * P + v * R, A = -b * R + v * P, k = Math.cos(w), y = Math.sin(w);
         return [
-          S,
-          p * C - P * w
+          x,
+          f * k - A * y
         ];
       },
       alpha: 0.42 + 0.38 * (a / o),
       width: Math.max(0.42, t / 155)
     });
   }
-  Ot(s, t, r, i, 0);
+  _t(e, t, i, r, 0);
 };
-function Nt(s, t) {
-  return Math.max(12, Math.round(s.pointN ?? t));
+function Ht(e, t) {
+  return Math.max(12, Math.round(e.pointN ?? t));
 }
-function nt(s, t, n) {
-  return ((n.rBase ?? 0.7) + (n.rDepth ?? 1.5) * t) * Z(s, n.rsPow ?? 0.6);
+function et(e, t, n) {
+  return ((n.rBase ?? 0.7) + (n.rDepth ?? 1.5) * t) * Z(e, n.rsPow ?? 0.6);
 }
-const wn = (s, t, n, r, e) => {
-  const o = t / 2, i = Nt(e, 132), a = 0.94 + 0.055 * Math.sin(n * 0.85), h = q(n * 0.08, 0.34, o, o, t * 0.38 * a), M = [];
-  for (let d = 0; d < i; d++) {
-    const [f, u, c] = h(...et(d, i)), l = (c + 1) / 2;
-    M.push({
-      x: f,
-      y: u,
-      z: c,
-      r: nt(t, l, e),
-      white: 0.7 - 0.58 * l,
-      a: 0.5 + 0.5 * l
+const Sn = (e, t, n, i, s) => {
+  const o = t / 2, r = Ht(s, 132), a = 0.94 + 0.055 * Math.sin(n * 0.85), c = X(n * 0.08, 0.34, o, o, t * 0.38 * a), d = [];
+  for (let u = 0; u < r; u++) {
+    const [M, l, h] = c(...st(u, r)), p = (h + 1) / 2;
+    d.push({
+      x: M,
+      y: l,
+      z: h,
+      r: et(t, p, s),
+      white: 0.7 - 0.58 * p,
+      a: 0.5 + 0.5 * p
     });
   }
-  G(s, M, r, e.rMin);
-}, xn = (s, t, n, r, e) => {
-  const o = t / 2, i = Nt(e, 108), a = Math.PI * 2, h = t * ((e.lobeGap ?? 0.17) + (e.gapPulse ?? 0.012) * Math.sin(n * 1.15)), M = t * (e.lobeRadius ?? 0.2), d = t >= 64 ? Math.max(2, Math.round(e.laneCount ?? 3)) : 2, f = t >= 64 ? Math.max(8, Math.round(e.nodeMinSegments ?? 10)) : 8, u = Math.max(
-    f,
-    Math.round(i * 0.38 / (d * 2))
-  ), c = t >= 64 ? Math.max(2, Math.round(e.bridgeStrands ?? 3)) : 2, l = [], g = Math.max(16, Math.round(i * 0.34)), b = t * (e.bodyRadius ?? 0.39), p = q(
+  U(e, d, i, s.rMin);
+}, Rn = (e, t, n, i, s) => {
+  const o = t / 2, r = Ht(s, 108), a = Math.PI * 2, c = t * ((s.lobeGap ?? 0.17) + (s.gapPulse ?? 0.012) * Math.sin(n * 1.15)), d = t * (s.lobeRadius ?? 0.2), u = t >= 64 ? Math.max(2, Math.round(s.laneCount ?? 3)) : 2, M = t >= 64 ? Math.max(8, Math.round(s.nodeMinSegments ?? 10)) : 8, l = Math.max(
+    M,
+    Math.round(r * 0.38 / (u * 2))
+  ), h = t >= 64 ? Math.max(2, Math.round(s.bridgeStrands ?? 3)) : 2, p = [], g = Math.max(16, Math.round(r * 0.34)), b = t * (s.bodyRadius ?? 0.39), f = X(
     n * 0.07,
     0.34 + 0.055 * Math.sin(n * 0.3),
     o,
@@ -769,204 +762,204 @@ const wn = (s, t, n, r, e) => {
     b
   ), v = Math.max(
     4,
-    Math.round(Math.sqrt(i) * 0.55)
+    Math.round(Math.sqrt(r) * 0.55)
   ), m = Math.max(
     2,
-    Math.round(Math.sqrt(i) * 0.3)
-  ), x = Math.max(
+    Math.round(Math.sqrt(r) * 0.3)
+  ), w = Math.max(
     8,
     Math.round(g / (v + m))
-  ), y = (S, P, C) => {
-    const w = (C + 1) / 2;
-    l.push({
-      x: S,
-      y: P,
-      z: C,
-      r: nt(t, w, e) * 0.92,
-      white: 0.58 - 0.4 * w,
-      a: 0.38 + 0.42 * w
+  ), P = (x, A, k) => {
+    const y = (k + 1) / 2;
+    p.push({
+      x,
+      y: A,
+      z: k,
+      r: et(t, y, s) * 0.92,
+      white: 0.58 - 0.4 * y,
+      a: 0.38 + 0.42 * y
     });
   };
-  for (let S = 0; S < v; S++) {
-    const P = -Math.PI / 2 + S / (v - 1) * Math.PI;
-    for (let C = 0; C < x; C++) {
-      const w = C / x * a - Math.PI / 2, V = Math.sin(w);
-      y(...p(
-        V * Math.cos(P),
-        Math.cos(w),
-        V * Math.sin(P)
+  for (let x = 0; x < v; x++) {
+    const A = -Math.PI / 2 + x / (v - 1) * Math.PI;
+    for (let k = 0; k < w; k++) {
+      const y = k / w * a - Math.PI / 2, S = Math.sin(y);
+      P(...f(
+        S * Math.cos(A),
+        Math.cos(y),
+        S * Math.sin(A)
       ));
     }
   }
-  for (let S = 0; S < m; S++) {
-    const P = -Math.PI / 2 + (S + 1) / (m + 1) * Math.PI, C = Math.cos(P);
-    for (let w = 0; w < x; w++) {
-      const V = w / x * a;
-      y(...p(
-        Math.cos(V) * C,
-        Math.sin(P),
-        Math.sin(V) * C
+  for (let x = 0; x < m; x++) {
+    const A = -Math.PI / 2 + (x + 1) / (m + 1) * Math.PI, k = Math.cos(A);
+    for (let y = 0; y < w; y++) {
+      const S = y / w * a;
+      P(...f(
+        Math.cos(S) * k,
+        Math.sin(A),
+        Math.sin(S) * k
       ));
     }
   }
-  const k = n * (e.signalSpeed ?? 0.28) % 1;
-  for (const S of [-1, 1]) {
-    const P = q(
-      n * 0.48 * S,
+  const R = n * (s.signalSpeed ?? 0.28) % 1;
+  for (const x of [-1, 1]) {
+    const A = X(
+      n * 0.48 * x,
       0.46,
-      o + h * S,
+      o + c * x,
       o,
-      M
-    ), C = (w, V) => {
-      const I = (w - (d - 1) / 2) * 0.38, R = Math.sqrt(Math.max(0, 1 - I * I)), D = V * a + w * 0.18;
-      return P(
-        Math.cos(D) * R,
-        I,
-        Math.sin(D) * R
+      d
+    ), k = (y, S) => {
+      const C = (y - (u - 1) / 2) * 0.38, O = Math.sqrt(Math.max(0, 1 - C * C)), T = S * a + y * 0.18;
+      return A(
+        Math.cos(T) * O,
+        C,
+        Math.sin(T) * O
       );
     };
-    for (let w = 0; w < d; w++) {
-      const V = (w - (d - 1) / 2) * 0.38, I = Math.sqrt(Math.max(0, 1 - V * V));
-      for (let D = 0; D < u; D++) {
-        const T = D / u * Math.PI * 2 + w * 0.18, [O, B, L] = P(
-          Math.cos(T) * I,
-          V,
-          Math.sin(T) * I
-        ), E = (L + 1) / 2;
-        l.push({
-          x: O,
-          y: B,
-          z: L,
-          r: nt(t, E, e),
-          white: 0.58 - 0.46 * E,
-          a: 0.55 + 0.4 * E
+    for (let y = 0; y < u; y++) {
+      const S = (y - (u - 1) / 2) * 0.38, C = Math.sqrt(Math.max(0, 1 - S * S));
+      for (let T = 0; T < l; T++) {
+        const L = T / l * Math.PI * 2 + y * 0.18, [B, I, E] = A(
+          Math.cos(L) * C,
+          S,
+          Math.sin(L) * C
+        ), D = (E + 1) / 2;
+        p.push({
+          x: B,
+          y: I,
+          z: E,
+          r: et(t, D, s),
+          white: 0.58 - 0.46 * D,
+          a: 0.55 + 0.4 * D
         });
       }
-      const R = -Math.PI / 2 + w / (d - 1) * Math.PI;
-      for (let D = 0; D < u; D++) {
-        const T = D / u * a - Math.PI / 2, O = Math.sin(T), [B, L, E] = P(
-          O * Math.cos(R),
-          Math.cos(T),
-          O * Math.sin(R)
-        ), z = (E + 1) / 2;
-        l.push({
-          x: B,
-          y: L,
-          z: E,
-          r: nt(t, z, e),
-          white: 0.62 - 0.48 * z,
-          a: 0.5 + 0.4 * z
+      const O = -Math.PI / 2 + y / (u - 1) * Math.PI;
+      for (let T = 0; T < l; T++) {
+        const L = T / l * a - Math.PI / 2, B = Math.sin(L), [I, E, D] = A(
+          B * Math.cos(O),
+          Math.cos(L),
+          B * Math.sin(O)
+        ), N = (D + 1) / 2;
+        p.push({
+          x: I,
+          y: E,
+          z: D,
+          r: et(t, N, s),
+          white: 0.62 - 0.48 * N,
+          a: 0.5 + 0.4 * N
         });
       }
     }
-    for (let w = 0; w < c; w++) {
-      const V = S < 0 ? 1 : -1, I = (1 + w / c * 0.68 + k * V) % 1, R = w % d, [D, T, O] = C(R, I), B = (O + 1) / 2, L = Math.max(0.8, t / 54);
-      l.push({
-        x: D,
-        y: T,
-        z: O + 0.04,
-        r: Math.max(0.5, L * (0.35 + 0.65 * B)),
-        white: 0.14 - 0.1 * B,
-        a: 0.42 + 0.58 * B
+    for (let y = 0; y < h; y++) {
+      const S = x < 0 ? 1 : -1, C = (1 + y / h * 0.68 + R * S) % 1, O = y % u, [T, L, B] = k(O, C), I = (B + 1) / 2, E = Math.max(0.8, t / 54);
+      p.push({
+        x: T,
+        y: L,
+        z: B + 0.04,
+        r: Math.max(0.5, E * (0.35 + 0.65 * I)),
+        white: 0.14 - 0.1 * I,
+        a: 0.42 + 0.58 * I
       });
     }
   }
-  G(s, l, r, e.rMin);
-}, Pn = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2, a = t / 2 * 0.82, h = q(n * 0.08, 0.3, o, i, 1), M = Z(t, e.rsPow ?? 0.6), d = [], f = Math.max(4, e.orbitN ?? 12), u = Math.max(1, Math.round(e.bandCount ?? 2)), c = Math.max(2, Math.round(f / u)), l = Math.max(16, e.ghostN ?? 40), g = e.particles ?? 5, b = Math.max(12, Math.round(l * 1.2));
-  for (let p = 0; p < b; p++) {
-    const v = et(p, b), [m, x, y] = h(
+  U(e, p, i, s.rMin);
+}, kn = (e, t, n, i, s) => {
+  const o = t / 2, r = t / 2, a = t / 2 * 0.82, c = X(n * 0.08, 0.3, o, r, 1), d = Z(t, s.rsPow ?? 0.6), u = [], M = Math.max(4, s.orbitN ?? 12), l = Math.max(1, Math.round(s.bandCount ?? 2)), h = Math.max(2, Math.round(M / l)), p = Math.max(16, s.ghostN ?? 40), g = s.particles ?? 5, b = Math.max(12, Math.round(p * 1.2));
+  for (let f = 0; f < b; f++) {
+    const v = st(f, b), [m, w, P] = c(
       v[0] * a,
       v[1] * a,
       v[2] * a
-    ), k = (y / a + 1) / 2;
-    d.push({
+    ), R = (P / a + 1) / 2;
+    u.push({
       x: m,
-      y: x,
-      z: y,
-      r: (e.ghostR ?? 0.9) * M,
+      y: w,
+      z: P,
+      r: (s.ghostR ?? 0.9) * d,
       white: 0.78,
-      a: (e.ghostA ?? 0.5) * (0.18 + 0.34 * k)
+      a: (s.ghostA ?? 0.5) * (0.18 + 0.34 * R)
     });
   }
-  for (let p = 0; p < u; p++) {
-    const v = p % 2 === 0 ? 1 : -1, m = p / u * Math.PI, x = m + n * 0.19 * v, y = 0.5 + p * 0.18 + 0.08 * Math.sin(n * 0.32 + m), k = Math.cos(x), S = 0, P = Math.sin(x), C = -P * Math.sin(y), w = Math.cos(y), V = k * Math.sin(y), I = S * V - P * w, R = P * C - k * V, D = k * w - S * C;
-    for (let T = 0; T < c; T++) {
-      const O = Math.abs(T - (c - 1) / 2) / Math.max(1, (c - 1) / 2), B = (T - (c - 1) / 2) * (e.bandSpread ?? 0.064);
-      for (let L = 0; L < l; L++) {
-        const E = L / l * Math.PI * 2, z = (0.105 * Math.sin(
-          E * 3 - n * 1.35 * v + T * 0.2 + m
-        ) + 0.04 * Math.sin(E * 5 + n * 0.78 - m)) * (e.wobMul ?? 1), N = B + z, $ = k * Math.cos(E) + C * Math.sin(E) + I * N, j = S * Math.cos(E) + w * Math.sin(E) + R * N, Y = P * Math.cos(E) + V * Math.sin(E) + D * N, F = Math.sqrt($ * $ + j * j + Y * Y), [U, _, H] = h(
-          $ / F * a,
-          j / F * a,
-          Y / F * a
-        ), J = (H / a + 1) / 2;
-        d.push({
-          x: U,
-          y: _,
-          z: H,
-          r: ((e.rBase ?? 1.1) + (e.rDepth ?? 1.7) * J) * (1 - 0.25 * O) * M,
-          white: 0.52 - 0.44 * J + 0.18 * O,
+  for (let f = 0; f < l; f++) {
+    const v = f % 2 === 0 ? 1 : -1, m = f / l * Math.PI, w = m + n * 0.19 * v, P = 0.5 + f * 0.18 + 0.08 * Math.sin(n * 0.32 + m), R = Math.cos(w), x = 0, A = Math.sin(w), k = -A * Math.sin(P), y = Math.cos(P), S = R * Math.sin(P), C = x * S - A * y, O = A * k - R * S, T = R * y - x * k;
+    for (let L = 0; L < h; L++) {
+      const B = Math.abs(L - (h - 1) / 2) / Math.max(1, (h - 1) / 2), I = (L - (h - 1) / 2) * (s.bandSpread ?? 0.064);
+      for (let E = 0; E < p; E++) {
+        const D = E / p * Math.PI * 2, N = (0.105 * Math.sin(
+          D * 3 - n * 1.35 * v + L * 0.2 + m
+        ) + 0.04 * Math.sin(D * 5 + n * 0.78 - m)) * (s.wobMul ?? 1), _ = I + N, z = R * Math.cos(D) + k * Math.sin(D) + C * _, Y = x * Math.cos(D) + y * Math.sin(D) + O * _, H = A * Math.cos(D) + S * Math.sin(D) + T * _, $ = Math.sqrt(z * z + Y * Y + H * H), [j, G, q] = c(
+          z / $ * a,
+          Y / $ * a,
+          H / $ * a
+        ), J = (q / a + 1) / 2;
+        u.push({
+          x: j,
+          y: G,
+          z: q,
+          r: ((s.rBase ?? 1.1) + (s.rDepth ?? 1.7) * J) * (1 - 0.25 * B) * d,
+          white: 0.52 - 0.44 * J + 0.18 * B,
           a: 0.4 + 0.6 * J
         });
       }
     }
-    for (let T = 0; T < g; T++) {
-      const O = T % c, B = (O - (c - 1) / 2) * (e.bandSpread ?? 0.064), L = n * (0.72 + p * 0.08) * v + T / g * Math.PI * 2 + m, E = (0.105 * Math.sin(
-        L * 3 - n * 1.35 * v + O * 0.2 + m
-      ) + 0.04 * Math.sin(L * 5 + n * 0.78 - m)) * (e.wobMul ?? 1), z = B + E, N = k * Math.cos(L) + C * Math.sin(L) + I * z, $ = S * Math.cos(L) + w * Math.sin(L) + R * z, j = P * Math.cos(L) + V * Math.sin(L) + D * z, Y = Math.sqrt(N * N + $ * $ + j * j), [F, U, _] = h(
-        N / Y * a,
-        $ / Y * a,
-        j / Y * a
-      ), H = (_ / a + 1) / 2;
-      d.push({
-        x: F,
-        y: U,
-        z: _ + 1,
-        r: ((e.partR ?? 1.55) + (e.partRDepth ?? 2.1) * H) * M,
-        white: 0.14 - 0.1 * H
+    for (let L = 0; L < g; L++) {
+      const B = L % h, I = (B - (h - 1) / 2) * (s.bandSpread ?? 0.064), E = n * (0.72 + f * 0.08) * v + L / g * Math.PI * 2 + m, D = (0.105 * Math.sin(
+        E * 3 - n * 1.35 * v + B * 0.2 + m
+      ) + 0.04 * Math.sin(E * 5 + n * 0.78 - m)) * (s.wobMul ?? 1), N = I + D, _ = R * Math.cos(E) + k * Math.sin(E) + C * N, z = x * Math.cos(E) + y * Math.sin(E) + O * N, Y = A * Math.cos(E) + S * Math.sin(E) + T * N, H = Math.sqrt(_ * _ + z * z + Y * Y), [$, j, G] = c(
+        _ / H * a,
+        z / H * a,
+        Y / H * a
+      ), q = (G / a + 1) / 2;
+      u.push({
+        x: $,
+        y: j,
+        z: G + 1,
+        r: ((s.partR ?? 1.55) + (s.partRDepth ?? 2.1) * q) * d,
+        white: 0.14 - 0.1 * q
       });
     }
   }
-  G(s, d, r, e.rMin);
-}, Sn = (s, t, n, r, e) => {
-  const o = t / 2, i = Math.max(24, Math.round(e.pulseN ?? 156)), a = Math.max(2, Math.round(e.shellCount ?? 3)), h = Math.max(
+  U(e, u, i, s.rMin);
+}, Cn = (e, t, n, i, s) => {
+  const o = t / 2, r = Math.max(24, Math.round(s.pulseN ?? 156)), a = Math.max(2, Math.round(s.shellCount ?? 3)), c = Math.max(
     a,
-    Math.round(e.ribbonLineCount ?? 25)
-  ), M = Math.floor(h / a), d = h % a, f = t >= 64 ? 12 : 8, u = Math.max(
-    f,
+    Math.round(s.ribbonLineCount ?? 25)
+  ), d = Math.floor(c / a), u = c % a, M = t >= 64 ? 12 : 8, l = Math.max(
+    M,
     Math.floor(
-      i * (e.dotDensity ?? 2.8) / h
+      r * (s.dotDensity ?? 2.8) / c
     )
-  ), c = Z(t, e.rsPow ?? 0.6), l = ((e.rBase ?? 0.7) + (e.rDepth ?? 1.6) * 0.25) * (e.dotScale ?? 1.65) * c, g = [], b = Math.max(24, Math.round(i * 0.85)), p = t * 0.39, v = q(
+  ), h = Z(t, s.rsPow ?? 0.6), p = ((s.rBase ?? 0.7) + (s.rDepth ?? 1.6) * 0.25) * (s.dotScale ?? 1.65) * h, g = [], b = Math.max(24, Math.round(r * 0.85)), f = t * 0.39, v = X(
     n * 0.1,
     0.34 + 0.055 * Math.sin(n * 0.3),
     o,
     o,
-    p
+    f
   );
   for (let m = 0; m < b; m++) {
-    const [x, y, k] = v(...et(m, b)), S = (k + 1) / 2;
+    const [w, P, R] = v(...st(m, b)), x = (R + 1) / 2;
     g.push({
-      x,
-      y,
-      z: k,
-      r: l * 0.65 * (0.42 + 0.58 * S),
-      white: 0.64 - 0.4 * S,
-      a: 0.18 + 0.48 * S
+      x: w,
+      y: P,
+      z: R,
+      r: p * 0.65 * (0.42 + 0.58 * x + 0.16 * x * x),
+      white: 0.64 - 0.4 * x,
+      a: 0.18 + 0.48 * x
     });
   }
   for (let m = 0; m < a; m++) {
-    const x = n * (e.pulseSpeed ?? 0.17) * Math.PI * 2 + m / a * Math.PI * 2, y = (1 - Math.cos(x)) / 2, k = t * (0.32 + 0.07 * y), S = 0.45 + 0.55 * ((1 + Math.sin(x)) / 2), P = n * 0.1 + m * 0.82, C = 0.5 + 0.12 * Math.sin(n * 0.25 + m), w = Math.cos(P), V = 0, I = Math.sin(P), R = -I * Math.sin(C), D = Math.cos(C), T = w * Math.sin(C), O = V * T - I * D, B = I * R - w * T, L = w * D - V * R, E = q(0, 0.18, o, o, k), z = M + (m < d ? 1 : 0);
-    for (let N = 0; N < z; N++) {
-      const $ = (N - (z - 1) / 2) * (e.bandSpread ?? 0.075);
-      for (let j = 0; j < u; j++) {
-        const Y = j / u * Math.PI * 2, F = (0.085 * Math.sin(
-          Y * 3 - n * 1.15 + N * 0.24 + m
-        ) + 0.032 * Math.sin(Y * 5 + n * 0.72 - m)) * (e.wobMul ?? 1), U = $ + F, _ = w * Math.cos(Y) + R * Math.sin(Y) + O * U, H = V * Math.cos(Y) + D * Math.sin(Y) + B * U, J = I * Math.cos(Y) + T * Math.sin(Y) + L * U, it = Math.sqrt(_ * _ + H * H + J * J), [Ft, Xt, rt] = E(_ / it, H / it, J / it), ct = (rt + 1) / 2, _t = Math.min(
+    const w = n * (s.pulseSpeed ?? 0.17) * Math.PI * 2 + m / a * Math.PI * 2, P = (1 - Math.cos(w)) / 2, R = t * (0.32 + 0.07 * P), x = 0.45 + 0.55 * ((1 + Math.sin(w)) / 2), A = n * 0.1 + m * 0.82, k = 0.5 + 0.12 * Math.sin(n * 0.25 + m), y = Math.cos(A), S = 0, C = Math.sin(A), O = -C * Math.sin(k), T = Math.cos(k), L = y * Math.sin(k), B = S * L - C * T, I = C * O - y * L, E = y * T - S * O, D = X(0, 0.18, o, o, R), N = d + (m < u ? 1 : 0);
+    for (let _ = 0; _ < N; _++) {
+      const z = (_ - (N - 1) / 2) * (s.bandSpread ?? 0.075);
+      for (let Y = 0; Y < l; Y++) {
+        const H = Y / l * Math.PI * 2, $ = (0.085 * Math.sin(
+          H * 3 - n * 1.15 + _ * 0.24 + m
+        ) + 0.032 * Math.sin(H * 5 + n * 0.72 - m)) * (s.wobMul ?? 1), j = z + $, G = y * Math.cos(H) + O * Math.sin(H) + B * j, q = S * Math.cos(H) + T * Math.sin(H) + I * j, J = C * Math.cos(H) + L * Math.sin(H) + E * j, it = Math.sqrt(G * G + q * q + J * J), [qt, Wt, rt] = D(G / it, q / it, J / it), Q = (rt + 1) / 2, Ut = Math.min(
           1,
           Math.max(0, (rt + 0.08) / 1.08)
-        ), mt = Math.floor(j / u * 16), gt = m * 11 + N, bt = n * ((e.shimmerSpeed ?? 0.55) / 0.55), Ut = Math.min(
+        ), mt = Math.floor(Y / l * 16), gt = m * 11 + _, bt = n * ((s.shimmerSpeed ?? 0.55) / 0.55), Gt = Math.min(
           1,
           Math.max(
             0,
@@ -976,69 +969,70 @@ const wn = (s, t, n, r, e) => {
               bt * 14.3 - gt * 0.83 + mt * 4.11
             )
           )
-        ), vt = _t * (0.48 + 0.52 * Ut);
+        ), vt = Ut * (0.48 + 0.52 * Gt);
         g.push({
-          x: Ft,
-          y: Xt,
-          z: rt + Math.sin(x) * 0.04,
-          r: l * (0.35 + 0.65 * ct),
-          white: 0.62 - 0.38 * ct - 0.18 * vt,
+          x: qt,
+          y: Wt,
+          z: rt + Math.sin(w) * 0.04,
+          r: p * (0.35 + 0.65 * Q + 0.2 * Q * Q),
+          white: 0.62 - 0.38 * Q - 0.18 * vt,
           a: Math.min(
             1,
-            0.14 + S * (0.34 + 0.28 * ct + 0.24 * vt)
-          )
+            0.14 + x * (0.34 + 0.28 * Q + 0.24 * vt)
+          ),
+          shimmer: !0
         });
       }
     }
   }
-  G(s, g, r, e.rMin);
-}, kn = (s, t, n, r, e) => {
-  const o = t / 2, i = t / 2, a = t / 2 * 0.78, h = e.spin ?? 1, M = q(n * 0.1 * h, 0.3, o, i, 1), d = Z(t, e.rsPow ?? 0.6), f = [], u = e.ghostN ?? 150;
-  for (let V = 0; V < u; V++) {
-    const I = et(V, u), [R, D, T] = M(I[0] * a, I[1] * a, I[2] * a), O = (T / a + 1) / 2;
-    f.push({ x: R, y: D, z: T, r: 0.8 * d, white: 0.78, a: 0.1 + 0.22 * O });
+  U(e, g, i, s.rMin);
+}, Ln = (e, t, n, i, s) => {
+  const o = t / 2, r = t / 2, a = t / 2 * 0.78, c = s.spin ?? 1, d = X(n * 0.1 * c, 0.3, o, r, 1), u = Z(t, s.rsPow ?? 0.6), M = [], l = s.ghostN ?? 150;
+  for (let S = 0; S < l; S++) {
+    const C = st(S, l), [O, T, L] = d(C[0] * a, C[1] * a, C[2] * a), B = (L / a + 1) / 2;
+    M.push({ x: O, y: T, z: L, r: 0.8 * u, white: 0.78, a: 0.1 + 0.22 * B });
   }
-  const c = n * 0.24 * h, l = 0.55 + 0.3 * Math.sin(n * 0.18) * h, g = Math.cos(c), b = 0, p = Math.sin(c), v = -p * Math.sin(l), m = Math.cos(l), x = g * Math.sin(l), y = b * x - p * m, k = p * v - g * x, S = g * m - b * v, P = e.lanes ?? 5, C = e.segs ?? 88, w = Math.max(1, Math.round(P * (e.bandMul ?? 1)));
-  for (let V = 0; V < w; V++) {
-    const I = (V - (w - 1) / 2) * 0.075, R = Math.abs(V - (w - 1) / 2) / Math.max(1, (w - 1) / 2);
-    for (let D = 0; D < C; D++) {
-      const T = D / C * 2 * Math.PI, O = (0.16 * Math.sin(T * 3 - n * 1.7 + V * 0.22) + 0.07 * Math.sin(T * 5 + n * 1.1)) * (e.wobMul ?? 1), B = I + O, L = g * Math.cos(T) + v * Math.sin(T) + y * B, E = b * Math.cos(T) + m * Math.sin(T) + k * B, z = p * Math.cos(T) + x * Math.sin(T) + S * B, N = Math.sqrt(L * L + E * E + z * z), [$, j, Y] = M(L / N * a, E / N * a, z / N * a), F = (Y / a + 1) / 2;
-      f.push({
-        x: $,
-        y: j,
-        z: Y,
-        r: ((e.rBase ?? 1.1) + (e.rDepth ?? 1.7) * F) * (1 - 0.25 * R) * d,
-        white: 0.52 - 0.44 * F + 0.18 * R,
-        a: 0.4 + 0.6 * F
+  const h = n * 0.24 * c, p = 0.55 + 0.3 * Math.sin(n * 0.18) * c, g = Math.cos(h), b = 0, f = Math.sin(h), v = -f * Math.sin(p), m = Math.cos(p), w = g * Math.sin(p), P = b * w - f * m, R = f * v - g * w, x = g * m - b * v, A = s.lanes ?? 5, k = s.segs ?? 88, y = Math.max(1, Math.round(A * (s.bandMul ?? 1)));
+  for (let S = 0; S < y; S++) {
+    const C = (S - (y - 1) / 2) * 0.075, O = Math.abs(S - (y - 1) / 2) / Math.max(1, (y - 1) / 2);
+    for (let T = 0; T < k; T++) {
+      const L = T / k * 2 * Math.PI, B = (0.16 * Math.sin(L * 3 - n * 1.7 + S * 0.22) + 0.07 * Math.sin(L * 5 + n * 1.1)) * (s.wobMul ?? 1), I = C + B, E = g * Math.cos(L) + v * Math.sin(L) + P * I, D = b * Math.cos(L) + m * Math.sin(L) + R * I, N = f * Math.cos(L) + w * Math.sin(L) + x * I, _ = Math.sqrt(E * E + D * D + N * N), [z, Y, H] = d(E / _ * a, D / _ * a, N / _ * a), $ = (H / a + 1) / 2;
+      M.push({
+        x: z,
+        y: Y,
+        z: H,
+        r: ((s.rBase ?? 1.1) + (s.rDepth ?? 1.7) * $) * (1 - 0.25 * O) * u,
+        white: 0.52 - 0.44 * $ + 0.18 * O,
+        a: 0.4 + 0.6 * $
       });
     }
   }
-  G(s, f, r, e.rMin);
-}, wt = {
-  idle: wn,
-  orbits: Pn,
-  connecting: xn,
-  globe: Zt,
-  rubik: Jt,
-  wave: Kt,
-  ribbon: kn,
-  responding: Sn,
-  morph: on
-}, Cn = {
-  idle: rn,
-  orbits: vn,
-  connecting: cn,
-  globe: hn,
-  rubik: un,
-  wave: yn,
-  ribbon: ln,
-  responding: dn,
-  morph: Mn
-}, Tn = [
+  U(e, M, i, s.rMin);
+}, Pt = {
+  idle: Sn,
+  orbits: kn,
+  connecting: Rn,
+  globe: Qt,
+  rubik: tn,
+  wave: nn,
+  ribbon: Ln,
+  responding: Cn,
+  morph: cn
+}, Tn = {
+  idle: un,
+  orbits: xn,
+  connecting: ln,
+  globe: dn,
+  rubik: Mn,
+  wave: An,
+  ribbon: pn,
+  responding: fn,
+  morph: mn
+}, Vn = [
   ["latRings", "lonDensity"],
   ["rings", "lonDensity"],
   ["lanes", "segs"]
-], Vn = ["orbitN", "ghostN", "pulseN", "pointN"], Ln = ["iconD"], Rn = [
+], In = ["orbitN", "ghostN", "pulseN", "pointN"], En = ["iconD"], On = [
   "rBase",
   "rDepth",
   "rActive",
@@ -1047,31 +1041,31 @@ const wn = (s, t, n, r, e) => {
   "partR",
   "partRDepth"
 ];
-function An(s, t) {
-  const n = { ...s }, r = /* @__PURE__ */ new Set(), e = Math.sqrt(t);
-  for (const [o, i] of Tn) {
-    const a = n[o], h = n[i];
-    a != null && h != null && !r.has(o) && !r.has(i) && (n[o] = Math.max(2, Math.round(a * e)), n[i] = Math.max(2, Math.round(h * e)), r.add(o), r.add(i));
+function Dn(e, t) {
+  const n = { ...e }, i = /* @__PURE__ */ new Set(), s = Math.sqrt(t);
+  for (const [o, r] of Vn) {
+    const a = n[o], c = n[r];
+    a != null && c != null && !i.has(o) && !i.has(r) && (n[o] = Math.max(2, Math.round(a * s)), n[r] = Math.max(2, Math.round(c * s)), i.add(o), i.add(r));
   }
-  for (const o of Vn) {
-    const i = n[o];
-    i != null && !r.has(o) && (n[o] = Math.max(1, Math.round(i * t)));
+  for (const o of In) {
+    const r = n[o];
+    r != null && !i.has(o) && (n[o] = Math.max(1, Math.round(r * t)));
   }
-  for (const o of Ln) {
-    const i = n[o];
-    i != null && (n[o] = Math.max(0.02, i * t));
+  for (const o of En) {
+    const r = n[o];
+    r != null && (n[o] = Math.max(0.02, r * t));
   }
   return n;
 }
-function In(s, t) {
-  const n = { ...s };
-  for (const r of Rn) {
-    const e = n[r];
-    e != null && (n[r] = e * t);
+function Bn(e, t) {
+  const n = { ...e };
+  for (const i of On) {
+    const s = n[i];
+    s != null && (n[i] = s * t);
   }
   return n.rSizeMul = (n.rSizeMul ?? 1) * t, n;
 }
-const Dn = {
+const Nn = {
   idle: {
     pointN: 132,
     rBase: 0.68,
@@ -1158,7 +1152,7 @@ const Dn = {
     bandSpread: 0.075,
     wobMul: 1,
     dotDensity: 2.8,
-    dotScale: 1.65,
+    dotScale: 1.75,
     shimmerSpeed: 0.55,
     rBase: 0.7,
     rDepth: 1.6,
@@ -1170,7 +1164,7 @@ const Dn = {
     iconD: 1,
     rMin: 0.25
   }
-}, En = {
+}, _n = {
   idle: "idle",
   working: "orbits",
   connecting: "connecting",
@@ -1180,7 +1174,7 @@ const Dn = {
   composing: "ribbon",
   responding: "responding",
   shaping: "morph"
-}, On = {
+}, Yn = {
   idle: {
     128: { speed: 0.72, count: 1.55, size: 0.95 },
     96: { speed: 0.76, count: 1.15, size: 0.98 },
@@ -1236,17 +1230,17 @@ const Dn = {
     32: { speed: 2.08, count: 0.53, size: 1.011, extra: { spread: 1.45 } }
   }
 }, xt = /* @__PURE__ */ new Map();
-function Bn(s, t) {
-  const n = `${s}-${t}`, r = xt.get(n);
-  if (r) return r;
-  const e = En[s], o = On[e][t];
-  let i = { ...Dn[e] };
-  o.count !== 1 && (i = An(i, o.count)), o.size !== 1 && (i = In(i, o.size)), o.extra && (i = { ...i, ...o.extra });
-  const a = { mode: e, speed: o.speed, opts: i };
+function Hn(e, t) {
+  const n = `${e}-${t}`, i = xt.get(n);
+  if (i) return i;
+  const s = _n[e], o = Yn[s][t];
+  let r = { ...Nn[s] };
+  o.count !== 1 && (r = Dn(r, o.count)), o.size !== 1 && (r = Bn(r, o.size)), o.extra && (r = { ...r, ...o.extra });
+  const a = { mode: s, speed: o.speed, opts: r };
   return xt.set(n, a), a;
 }
-function Nn(s) {
-  let t = s;
+function zn(e) {
+  let t = e;
   for (; t; ) {
     const n = t.getAttribute("data-theme") ?? t.getAttribute("data-coreui-theme");
     if (n === "dark")
@@ -1261,14 +1255,14 @@ function Nn(s) {
   }
   return null;
 }
-function zn() {
+function Xn() {
   return typeof matchMedia > "u" || matchMedia("(prefers-color-scheme: dark)").matches;
 }
-function Pt(s, t) {
-  return s === "dark" ? !0 : s === "light" ? !1 : Nn(t) ?? zn();
+function At(e, t) {
+  return e === "dark" ? !0 : e === "light" ? !1 : zn(t) ?? Xn();
 }
-function St(s, t) {
-  return s ? typeof s.addEventListener == "function" ? (s.addEventListener("change", t), () => s.removeEventListener("change", t)) : (s.addListener(t), () => s.removeListener(t)) : () => {
+function St(e, t) {
+  return e ? typeof e.addEventListener == "function" ? (e.addEventListener("change", t), () => e.removeEventListener("change", t)) : (e.addListener(t), () => e.removeListener(t)) : () => {
   };
 }
 const zt = [
@@ -1281,7 +1275,7 @@ const zt = [
   "composing",
   "responding",
   "shaping"
-], Yt = [32, 64, 96, 128], jt = ["auto", "dark", "light"], $t = ["classic", "contour"], Yn = {
+], Xt = [32, 64, 96, 128], $t = ["auto", "dark", "light"], Ft = ["classic", "contour"], $n = {
   idle: "Ready",
   working: "Working…",
   connecting: "Connecting…",
@@ -1292,11 +1286,11 @@ const zt = [
   responding: "Responding…",
   shaping: "Shaping…"
 };
-function tt(s, t) {
-  return s.includes(t);
+function nt(e, t) {
+  return e.includes(t);
 }
-function jn(s) {
-  const t = typeof s == "string" ? document.querySelector(s) : s;
+function Fn(e) {
+  const t = typeof e == "string" ? document.querySelector(e) : e;
   if (!t)
     throw new Error("ThinkingOrb target was not found.");
   if (t instanceof HTMLCanvasElement)
@@ -1304,172 +1298,172 @@ function jn(s) {
   const n = document.createElement("canvas");
   return n.dataset.thinkingOrbCanvas = "", t.append(n), { canvas: n, createdCanvas: !0 };
 }
-function kt(s) {
-  return typeof requestAnimationFrame == "function" ? requestAnimationFrame(s) : window.setTimeout(() => s(performance.now()), 16);
+function Rt(e) {
+  return typeof requestAnimationFrame == "function" ? requestAnimationFrame(e) : window.setTimeout(() => e(performance.now()), 16);
 }
-function $n(s) {
+function jn(e) {
   if (typeof cancelAnimationFrame == "function") {
-    cancelAnimationFrame(s);
+    cancelAnimationFrame(e);
     return;
   }
-  window.clearTimeout(s);
+  window.clearTimeout(e);
 }
-function qn(s, t) {
+function qn(e, t) {
   let n = [];
-  const r = (e) => {
+  const i = (s) => {
     for (const [
       o,
-      i,
+      r,
       a,
-      h,
-      M,
-      d
+      c,
+      d,
+      u
     ] of n) {
-      if (e === "clip") {
-        s.arc(
+      if (s === "clip") {
+        e.arc(
           o,
-          i,
+          r,
           a * 1.14,
-          h,
-          M,
-          d ?? !1
+          c,
+          d,
+          u ?? !1
         );
         continue;
       }
-      const [f, u, c] = t(o, i);
-      s.arc(
-        f,
-        u,
-        a * (1 + 0.16 * c),
-        h,
+      const [M, l, h] = t(o, r);
+      e.arc(
         M,
-        d ?? !1
+        l,
+        a * (1 + 0.16 * h),
+        c,
+        d,
+        u ?? !1
       );
     }
     n = [];
   };
-  return new Proxy(s, {
-    get(e, o) {
+  return new Proxy(e, {
+    get(s, o) {
       if (o === "beginPath")
         return () => {
-          n = [], e.beginPath();
+          n = [], s.beginPath();
         };
       if (o === "moveTo")
-        return (a, h) => {
-          const [M, d] = t(a, h);
-          e.moveTo(M, d);
+        return (a, c) => {
+          const [d, u] = t(a, c);
+          s.moveTo(d, u);
         };
       if (o === "lineTo")
-        return (a, h) => {
-          const [M, d] = t(a, h);
-          e.lineTo(M, d);
+        return (a, c) => {
+          const [d, u] = t(a, c);
+          s.lineTo(d, u);
         };
       if (o === "arc")
-        return (a, h, M, d, f, u) => {
+        return (a, c, d, u, M, l) => {
           n.push([
             a,
-            h,
-            M,
+            c,
             d,
-            f,
-            u
+            u,
+            M,
+            l
           ]);
         };
       if (o === "fill")
         return () => {
-          r("draw"), e.fill();
+          i("draw"), s.fill();
         };
       if (o === "stroke")
         return () => {
-          r("draw"), e.stroke();
+          i("draw"), s.stroke();
         };
       if (o === "clip")
         return () => {
-          r("clip"), e.clip();
+          i("clip"), s.clip();
         };
-      const i = Reflect.get(e, o, e);
-      return typeof i == "function" ? i.bind(e) : i;
+      const r = Reflect.get(s, o, s);
+      return typeof r == "function" ? r.bind(s) : r;
     },
-    set(e, o, i) {
-      return Reflect.set(e, o, i, e);
+    set(s, o, r) {
+      return Reflect.set(s, o, r, s);
     }
   });
 }
-class qt {
+class jt {
   constructor(t, n = {}) {
-    A(this, "canvas");
-    A(this, "createdCanvas");
-    A(this, "context");
-    A(this, "distortionContext");
-    A(this, "stateValue", "working");
-    A(this, "sizeValue", 64);
-    A(this, "themeValue", "auto");
-    A(this, "variantValue", "classic");
-    A(this, "speedValue", 1);
-    A(this, "pausedValue", !1);
-    A(this, "interactiveValue", !1);
-    A(this, "customAriaLabel", null);
-    A(this, "darkValue", !0);
-    A(this, "reducedMotionValue", !1);
-    A(this, "visibleValue", !0);
-    A(this, "destroyed", !1);
-    A(this, "running", !1);
-    A(this, "frameHandle", 0);
-    A(this, "lastRenderedTime", 0.6);
-    A(this, "pointerX", 32);
-    A(this, "pointerY", 32);
-    A(this, "pointerStrength", 0);
-    A(this, "pointerTargetX", 32);
-    A(this, "pointerTargetY", 32);
-    A(this, "pointerTargetStrength", 0);
-    A(this, "intersectionObserver", null);
-    A(this, "mutationObserver", null);
-    A(this, "removeDarkMediaListener", () => {
+    V(this, "canvas");
+    V(this, "createdCanvas");
+    V(this, "context");
+    V(this, "distortionContext");
+    V(this, "stateValue", "working");
+    V(this, "sizeValue", 64);
+    V(this, "themeValue", "auto");
+    V(this, "variantValue", "classic");
+    V(this, "speedValue", 1);
+    V(this, "pausedValue", !1);
+    V(this, "interactiveValue", !1);
+    V(this, "customAriaLabel", null);
+    V(this, "darkValue", !0);
+    V(this, "reducedMotionValue", !1);
+    V(this, "visibleValue", !0);
+    V(this, "destroyed", !1);
+    V(this, "running", !1);
+    V(this, "frameHandle", 0);
+    V(this, "lastRenderedTime", 0.6);
+    V(this, "pointerX", 32);
+    V(this, "pointerY", 32);
+    V(this, "pointerStrength", 0);
+    V(this, "pointerTargetX", 32);
+    V(this, "pointerTargetY", 32);
+    V(this, "pointerTargetStrength", 0);
+    V(this, "intersectionObserver", null);
+    V(this, "mutationObserver", null);
+    V(this, "removeDarkMediaListener", () => {
     });
-    A(this, "removeMotionMediaListener", () => {
+    V(this, "removeMotionMediaListener", () => {
     });
-    A(this, "onVisibilityChange", () => {
+    V(this, "onVisibilityChange", () => {
       this.syncAnimation();
     });
-    A(this, "onThemeChange", () => {
-      const t = Pt(this.themeValue, this.canvas);
+    V(this, "onThemeChange", () => {
+      const t = At(this.themeValue, this.canvas);
       t !== this.darkValue && (this.darkValue = t, this.render());
     });
-    A(this, "onReducedMotionChange", (t) => {
+    V(this, "onReducedMotionChange", (t) => {
       this.reducedMotionValue = t.matches, t.matches && (this.pointerStrength = 0, this.pointerTargetStrength = 0), this.render(), this.syncAnimation();
     });
-    A(this, "onPointerMove", (t) => {
+    V(this, "onPointerMove", (t) => {
       if (!this.interactiveValue || this.reducedMotionValue)
         return;
-      const n = this.canvas.getBoundingClientRect(), r = n.width || this.sizeValue, e = n.height || this.sizeValue;
+      const n = this.canvas.getBoundingClientRect(), i = n.width || this.sizeValue, s = n.height || this.sizeValue;
       this.pointerTargetX = Math.min(
         this.sizeValue,
-        Math.max(0, (t.clientX - n.left) / r * this.sizeValue)
+        Math.max(0, (t.clientX - n.left) / i * this.sizeValue)
       ), this.pointerTargetY = Math.min(
         this.sizeValue,
-        Math.max(0, (t.clientY - n.top) / e * this.sizeValue)
+        Math.max(0, (t.clientY - n.top) / s * this.sizeValue)
       ), this.pointerTargetStrength = 1, this.stepInteraction(), this.render(this.pausedValue ? this.lastRenderedTime : void 0), this.syncAnimation();
     });
-    A(this, "onPointerLeave", () => {
+    V(this, "onPointerLeave", () => {
       this.interactiveValue && (this.pointerTargetStrength = 0, this.stepInteraction(), this.render(this.pausedValue ? this.lastRenderedTime : void 0), this.syncAnimation());
     });
-    A(this, "onPointerDown", (t) => {
-      var n, r;
-      !this.interactiveValue || this.reducedMotionValue || (t.pointerType !== "mouse" && t.preventDefault(), (r = (n = this.canvas).setPointerCapture) == null || r.call(n, t.pointerId), this.onPointerMove(t));
+    V(this, "onPointerDown", (t) => {
+      var n, i;
+      !this.interactiveValue || this.reducedMotionValue || (t.pointerType !== "mouse" && t.preventDefault(), (i = (n = this.canvas).setPointerCapture) == null || i.call(n, t.pointerId), this.onPointerMove(t));
     });
-    A(this, "onPointerUp", (t) => {
-      var n, r;
-      (r = (n = this.canvas).releasePointerCapture) == null || r.call(n, t.pointerId), t.pointerType !== "mouse" && this.onPointerLeave();
+    V(this, "onPointerUp", (t) => {
+      var n, i;
+      (i = (n = this.canvas).releasePointerCapture) == null || i.call(n, t.pointerId), t.pointerType !== "mouse" && this.onPointerLeave();
     });
     if (typeof document > "u")
       throw new Error("ThinkingOrb requires a browser DOM.");
-    const { canvas: r, createdCanvas: e } = jn(t), o = r.getContext("2d");
+    const { canvas: i, createdCanvas: s } = Fn(t), o = i.getContext("2d");
     if (!o)
       throw new Error("ThinkingOrb requires CanvasRenderingContext2D support.");
-    this.canvas = r, this.createdCanvas = e, this.context = o, this.distortionContext = qn(
+    this.canvas = i, this.createdCanvas = s, this.context = o, this.distortionContext = qn(
       o,
-      (i, a) => this.distortPoint(i, a)
-    ), n.className && e && (r.className = n.className), this.setupObservers(), this.update(n);
+      (r, a) => this.distortPoint(r, a)
+    ), n.className && s && (i.className = n.className), this.setupObservers(), this.update(n);
   }
   get state() {
     return this.stateValue;
@@ -1509,22 +1503,22 @@ class qt {
   update(t = {}) {
     var n;
     if (this.assertActive(), t.state !== void 0) {
-      if (!tt(zt, t.state))
+      if (!nt(zt, t.state))
         throw new TypeError(`Unknown ThinkingOrb state: ${String(t.state)}`);
       this.stateValue = t.state;
     }
     if (t.size !== void 0) {
-      if (!tt(Yt, t.size))
+      if (!nt(Xt, t.size))
         throw new TypeError("ThinkingOrb size must be 32, 64, 96, or 128.");
       this.sizeValue = t.size;
     }
     if (t.theme !== void 0) {
-      if (!tt(jt, t.theme))
+      if (!nt($t, t.theme))
         throw new TypeError(`Unknown ThinkingOrb theme: ${String(t.theme)}`);
       this.themeValue = t.theme;
     }
     if (t.variant !== void 0) {
-      if (!tt($t, t.variant))
+      if (!nt(Ft, t.variant))
         throw new TypeError(`Unknown ThinkingOrb variant: ${String(t.variant)}`);
       this.variantValue = t.variant;
     }
@@ -1533,7 +1527,7 @@ class qt {
         throw new TypeError("ThinkingOrb speed must be a positive number.");
       this.speedValue = t.speed;
     }
-    return t.paused !== void 0 && (this.pausedValue = !!t.paused), t.interactive !== void 0 && (this.interactiveValue = !!t.interactive, this.interactiveValue || (this.pointerStrength = 0, this.pointerTargetStrength = 0)), "ariaLabel" in t && (this.customAriaLabel = ((n = t.ariaLabel) == null ? void 0 : n.trim()) || null), this.darkValue = Pt(this.themeValue, this.canvas), this.configureCanvas(), this.render(), this.syncAnimation(), this;
+    return t.paused !== void 0 && (this.pausedValue = !!t.paused), t.interactive !== void 0 && (this.interactiveValue = !!t.interactive, this.interactiveValue || (this.pointerStrength = 0, this.pointerTargetStrength = 0)), "ariaLabel" in t && (this.customAriaLabel = ((n = t.ariaLabel) == null ? void 0 : n.trim()) || null), this.darkValue = At(this.themeValue, this.canvas), this.configureCanvas(), this.render(), this.syncAnimation(), this;
   }
   setState(t) {
     return this.update({ state: t });
@@ -1558,21 +1552,21 @@ class qt {
   }
   render(t) {
     this.assertActive(), this.resizeBackingStore();
-    const { mode: n, speed: r, opts: e } = Bn(
+    const { mode: n, speed: i, opts: s } = Hn(
       this.stateValue,
       this.sizeValue
-    ), o = t ?? (this.reducedMotionValue ? 0.6 : performance.now() / 1e3 * r * this.speedValue), i = this.getDevicePixelRatio(), a = this.interactiveValue && !this.reducedMotionValue && this.pointerStrength > 1e-3 ? this.distortionContext : this.context;
-    return this.lastRenderedTime = o, this.context.setTransform(i, 0, 0, i, 0, 0), this.context.clearRect(0, 0, this.sizeValue, this.sizeValue), (this.variantValue === "contour" ? Cn[n] ?? wt[n] : wt[n])(
+    ), o = t ?? (this.reducedMotionValue ? 0.6 : performance.now() / 1e3 * i * this.speedValue), r = this.getDevicePixelRatio(), a = this.interactiveValue && !this.reducedMotionValue && this.pointerStrength > 1e-3 ? this.distortionContext : this.context;
+    return this.lastRenderedTime = o, this.context.setTransform(r, 0, 0, r, 0, 0), this.context.clearRect(0, 0, this.sizeValue, this.sizeValue), (this.variantValue === "contour" ? Tn[n] ?? Pt[n] : Pt[n])(
       a,
       this.sizeValue,
       o,
       this.darkValue,
-      e
+      s
     ), this;
   }
   destroy(t = {}) {
-    var n, r;
-    this.destroyed || (this.stop(), (n = this.intersectionObserver) == null || n.disconnect(), (r = this.mutationObserver) == null || r.disconnect(), this.removeDarkMediaListener(), this.removeMotionMediaListener(), document.removeEventListener("visibilitychange", this.onVisibilityChange), this.canvas.removeEventListener("pointerenter", this.onPointerMove), this.canvas.removeEventListener("pointermove", this.onPointerMove), this.canvas.removeEventListener("pointerleave", this.onPointerLeave), this.canvas.removeEventListener("pointercancel", this.onPointerLeave), this.canvas.removeEventListener("pointerdown", this.onPointerDown), this.canvas.removeEventListener("pointerup", this.onPointerUp), (t.removeCanvas ?? this.createdCanvas) && this.canvas.isConnected && this.canvas.remove(), this.destroyed = !0);
+    var n, i;
+    this.destroyed || (this.stop(), (n = this.intersectionObserver) == null || n.disconnect(), (i = this.mutationObserver) == null || i.disconnect(), this.removeDarkMediaListener(), this.removeMotionMediaListener(), document.removeEventListener("visibilitychange", this.onVisibilityChange), this.canvas.removeEventListener("pointerenter", this.onPointerMove), this.canvas.removeEventListener("pointermove", this.onPointerMove), this.canvas.removeEventListener("pointerleave", this.onPointerLeave), this.canvas.removeEventListener("pointercancel", this.onPointerLeave), this.canvas.removeEventListener("pointerdown", this.onPointerDown), this.canvas.removeEventListener("pointerup", this.onPointerUp), (t.removeCanvas ?? this.createdCanvas) && this.canvas.isConnected && this.canvas.remove(), this.destroyed = !0);
   }
   setupObservers() {
     const t = typeof matchMedia == "function" ? matchMedia("(prefers-color-scheme: dark)") : null, n = typeof matchMedia == "function" ? matchMedia("(prefers-reduced-motion: reduce)") : null;
@@ -1586,14 +1580,14 @@ class qt {
       attributes: !0,
       attributeFilter: ["class", "data-theme", "data-coreui-theme"],
       subtree: !0
-    })), typeof IntersectionObserver < "u" && (this.intersectionObserver = new IntersectionObserver(([r]) => {
-      this.visibleValue = (r == null ? void 0 : r.isIntersecting) ?? !0, this.syncAnimation();
+    })), typeof IntersectionObserver < "u" && (this.intersectionObserver = new IntersectionObserver(([i]) => {
+      this.visibleValue = (i == null ? void 0 : i.isIntersecting) ?? !0, this.syncAnimation();
     }), this.intersectionObserver.observe(this.canvas)), document.addEventListener("visibilitychange", this.onVisibilityChange), this.canvas.addEventListener("pointerenter", this.onPointerMove), this.canvas.addEventListener("pointermove", this.onPointerMove), this.canvas.addEventListener("pointerleave", this.onPointerLeave), this.canvas.addEventListener("pointercancel", this.onPointerLeave), this.canvas.addEventListener("pointerdown", this.onPointerDown), this.canvas.addEventListener("pointerup", this.onPointerUp);
   }
   configureCanvas() {
     this.canvas.dataset.thinkingOrbState = this.stateValue, this.canvas.dataset.thinkingOrbTheme = this.themeValue, this.canvas.dataset.thinkingOrbVariant = this.variantValue, this.canvas.dataset.thinkingOrbInteractive = String(this.interactiveValue), this.canvas.setAttribute("role", "img"), this.canvas.setAttribute(
       "aria-label",
-      this.customAriaLabel ?? Yn[this.stateValue]
+      this.customAriaLabel ?? $n[this.stateValue]
     ), this.canvas.style.width = `${this.sizeValue}px`, this.canvas.style.height = `${this.sizeValue}px`, this.canvas.style.display = "block", this.canvas.style.cursor = this.interactiveValue ? "crosshair" : "", this.canvas.style.touchAction = this.interactiveValue ? "none" : "";
   }
   resizeBackingStore() {
@@ -1626,13 +1620,13 @@ class qt {
           this.running = !1;
           return;
         }
-        this.frameHandle = kt(t);
+        this.frameHandle = Rt(t);
       }
     };
-    this.frameHandle = kt(t);
+    this.frameHandle = Rt(t);
   }
   stop() {
-    this.running = !1, $n(this.frameHandle);
+    this.running = !1, jn(this.frameHandle);
   }
   stepInteraction() {
     const n = this.pointerTargetStrength > this.pointerStrength ? 0.24 : 0.14;
@@ -1642,14 +1636,14 @@ class qt {
     return !this.interactiveValue || this.reducedMotionValue ? !1 : this.pointerTargetStrength > 1e-3 || this.pointerStrength > 1e-3 || Math.abs(this.pointerTargetX - this.pointerX) > 0.05 || Math.abs(this.pointerTargetY - this.pointerY) > 0.05;
   }
   distortPoint(t, n) {
-    const r = t - this.pointerX, e = n - this.pointerY, o = Math.hypot(r, e), i = this.sizeValue * 0.55;
-    if (this.pointerStrength <= 1e-3 || o >= i || o <= 1e-4)
+    const i = t - this.pointerX, s = n - this.pointerY, o = Math.hypot(i, s), r = this.sizeValue * 0.55;
+    if (this.pointerStrength <= 1e-3 || o >= r || o <= 1e-4)
       return [t, n, 0];
-    const a = 1 - o / i, h = a * a * (3 - 2 * a) * this.pointerStrength, M = r / o, d = e / o, f = this.sizeValue * 0.105 * h, u = this.sizeValue * 0.018 * h;
+    const a = 1 - o / r, c = a * a * (3 - 2 * a) * this.pointerStrength, d = i / o, u = s / o, M = this.sizeValue * 0.105 * c, l = this.sizeValue * 0.018 * c;
     return [
-      t + M * f - d * u,
-      n + d * f + M * u,
-      h
+      t + d * M - u * l,
+      n + u * M + d * l,
+      c
     ];
   }
   assertActive() {
@@ -1657,40 +1651,40 @@ class qt {
       throw new Error("ThinkingOrb has been destroyed.");
   }
 }
-function Wn(s, t = {}) {
-  return new qt(s, t);
+function Kn(e, t = {}) {
+  return new jt(e, t);
 }
-const Fn = typeof globalThis.HTMLElement > "u" ? class {
+const Wn = typeof globalThis.HTMLElement > "u" ? class {
 } : globalThis.HTMLElement;
-function Ct(s) {
-  return zt.includes(s) ? s : "working";
+function kt(e) {
+  return zt.includes(e) ? e : "working";
 }
-function Xn(s) {
-  const t = Number(s);
-  return Yt.includes(t) ? t : 64;
+function Un(e) {
+  const t = Number(e);
+  return Xt.includes(t) ? t : 64;
 }
-function _n(s) {
-  return jt.includes(s) ? s : "auto";
+function Gn(e) {
+  return $t.includes(e) ? e : "auto";
 }
-function Tt(s) {
-  return $t.includes(s) ? s : "classic";
+function Ct(e) {
+  return Ft.includes(e) ? e : "classic";
 }
-function Un(s) {
-  const t = Number(s);
+function Zn(e) {
+  const t = Number(e);
   return Number.isFinite(t) && t > 0 ? t : 1;
 }
-class ft extends Fn {
+class Mt extends Wn {
   constructor() {
     super(...arguments);
-    A(this, "controller", null);
+    V(this, "controller", null);
   }
   connectedCallback() {
-    var r, e, o;
+    var i, s, o;
     if (this.controller || !(this instanceof HTMLElement))
       return;
-    (r = this.style).display || (r.display = "inline-block"), (e = this.style).lineHeight || (e.lineHeight = "0"), (o = this.style).verticalAlign || (o.verticalAlign = "middle");
+    (i = this.style).display || (i.display = "inline-block"), (s = this.style).lineHeight || (s.lineHeight = "0"), (o = this.style).verticalAlign || (o.verticalAlign = "middle");
     const n = document.createElement("canvas");
-    n.dataset.thinkingOrbCanvas = "", this.replaceChildren(n), this.controller = new qt(n, this.readOptions());
+    n.dataset.thinkingOrbCanvas = "", this.replaceChildren(n), this.controller = new jt(n, this.readOptions());
   }
   disconnectedCallback() {
     var n;
@@ -1704,13 +1698,13 @@ class ft extends Fn {
     return this.controller;
   }
   get state() {
-    return Ct(this.getAttribute("state"));
+    return kt(this.getAttribute("state"));
   }
   set state(n) {
     this.setAttribute("state", n);
   }
   get variant() {
-    return Tt(this.getAttribute("variant"));
+    return Ct(this.getAttribute("variant"));
   }
   set variant(n) {
     this.setAttribute("variant", n);
@@ -1729,18 +1723,18 @@ class ft extends Fn {
   }
   readOptions() {
     return {
-      state: Ct(this.getAttribute("state")),
-      size: Xn(this.getAttribute("size")),
-      theme: _n(this.getAttribute("theme")),
-      variant: Tt(this.getAttribute("variant")),
-      speed: Un(this.getAttribute("speed")),
+      state: kt(this.getAttribute("state")),
+      size: Un(this.getAttribute("size")),
+      theme: Gn(this.getAttribute("theme")),
+      variant: Ct(this.getAttribute("variant")),
+      speed: Zn(this.getAttribute("speed")),
       paused: this.hasAttribute("paused"),
       interactive: this.hasAttribute("interactive"),
       ariaLabel: this.getAttribute("aria-label")
     };
   }
 }
-A(ft, "observedAttributes", [
+V(Mt, "observedAttributes", [
   "state",
   "size",
   "theme",
@@ -1750,22 +1744,22 @@ A(ft, "observedAttributes", [
   "interactive",
   "aria-label"
 ]);
-function Gn(s = "thinking-orb") {
-  if (!s.includes("-"))
+function Qn(e = "thinking-orb") {
+  if (!e.includes("-"))
     throw new TypeError("A custom-element name must contain a hyphen.");
-  return typeof customElements < "u" && !customElements.get(s) && customElements.define(s, ft), ft;
+  return typeof customElements < "u" && !customElements.get(e) && customElements.define(e, Mt), Mt;
 }
 export {
-  Cn as CONTOUR_MODE_DRAWS,
-  wt as MODE_DRAWS,
-  Yt as ORB_SIZES,
+  Tn as CONTOUR_MODE_DRAWS,
+  Pt as MODE_DRAWS,
+  Xt as ORB_SIZES,
   zt as ORB_STATES,
-  jt as ORB_THEMES,
-  $t as ORB_VARIANTS,
-  En as STATE_TO_MODE,
-  qt as ThinkingOrb,
-  ft as ThinkingOrbElement,
-  Wn as createThinkingOrb,
-  Gn as defineThinkingOrb,
-  Bn as resolvePreset
+  $t as ORB_THEMES,
+  Ft as ORB_VARIANTS,
+  _n as STATE_TO_MODE,
+  jt as ThinkingOrb,
+  Mt as ThinkingOrbElement,
+  Kn as createThinkingOrb,
+  Qn as defineThinkingOrb,
+  Hn as resolvePreset
 };

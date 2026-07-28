@@ -6,7 +6,12 @@ export interface Dot {
     /** Ink value: 0 = darkest ink on paper. Mirrored on dark themes. */
     white: number;
     a?: number;
+    /** Allows intentional shimmer marks to exceed the shared base intensity. */
+    shimmer?: boolean;
 }
+export declare const ORB_MAX_ALPHA = 0.72;
+export declare const ORB_SHIMMER_MAX_ALPHA = 0.92;
+export declare function capOrbAlpha(alpha: number, maximum?: number): number;
 export type Projector = (x: number, y: number, z: number) => [number, number, number];
 /** Deterministic hash in [0, 1). */
 export declare function hashD(a: number, b: number): number;

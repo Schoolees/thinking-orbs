@@ -50,7 +50,11 @@ export const drawResponding: ModeDraw = (ctx, size, t, dark, opts) => {
       x,
       y,
       z,
-      r: nearRadius * 0.65 * (0.42 + (0.58 * depth)),
+      r: nearRadius * 0.65 * (
+        0.42
+        + (0.58 * depth)
+        + (0.16 * depth * depth)
+      ),
       white: 0.64 - (0.4 * depth),
       a: 0.18 + (0.48 * depth)
     });
@@ -142,7 +146,11 @@ export const drawResponding: ModeDraw = (ctx, size, t, dark, opts) => {
           x: px,
           y: py,
           z: zr + (Math.sin(cycle) * 0.04),
-          r: nearRadius * (0.35 + (0.65 * depth)),
+          r: nearRadius * (
+            0.35
+            + (0.65 * depth)
+            + (0.2 * depth * depth)
+          ),
           white: 0.62 - (0.38 * depth) - (0.18 * shimmer),
           a: Math.min(
             1,
@@ -151,7 +159,8 @@ export const drawResponding: ModeDraw = (ctx, size, t, dark, opts) => {
               + (0.28 * depth)
               + (0.24 * shimmer)
             ))
-          )
+          ),
+          shimmer: true
         });
       }
     }

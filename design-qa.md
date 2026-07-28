@@ -38,6 +38,14 @@ preserves spherical depth at 32px and 64px, where the bands alone previously
 collapsed into an hourglass. The slow contour field resolves the classic
 working preset's exact `orbitN`, band count, lane distribution, spacing, and
 motion at every size; only its continuous-stroke rendering differs.
+The shared contour globes now use a denser 29-by-19 cage at 128px, scaling
+down to 11-by-8 at 32px. Thinner low-opacity rear strokes and restrained
+front-surface overlays replace the previous evenly weighted lines, keeping
+the denser globe lighter while making its spherical depth more legible. The
+searching alternative instead uses a denser listening-style wave field clipped
+into a circular silhouette, with independent brighter shimmer fragments. A
+shared base-opacity ceiling aligns classic dots and contour strokes, while a
+separate shimmer ceiling preserves brighter active highlights.
 
 The listening contour perimeter uses the classic listening orb's exact
 ring-indexed radius equation: the same preset-scaled ring count, `2.1` and
